@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.EditLanguage">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/languagetoolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/choose_language"
+        app:titleTextColor="@color/white"
+        android:background="@color/green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/langradiobtn"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/applybtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/languagetoolbar"
+        app:layout_constraintVertical_bias="0.5">
+
+        <RadioButton
+            android:id="@+id/radioenglish"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:buttonTint="@color/light_green"
+            android:paddingStart="12dp"
+            android:paddingEnd="1dp"
+            android:text="English"
+            android:textFontWeight="700"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/radiomalayalam"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:buttonTint="@color/light_green"
+            android:hint="Malayalam"
+            android:paddingStart="12dp"
+            android:paddingEnd="1dp"
+            android:text="മലയാളം"
+            android:textFontWeight="700"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/radiotamil"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:buttonTint="@color/light_green"
+            android:hint="Tamil"
+            android:paddingStart="12dp"
+            android:paddingEnd="1dp"
+            android:text="தமிழ்"
+            android:textFontWeight="700"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/radiotelugu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:buttonTint="@color/light_green"
+            android:hint="Telugu"
+            android:paddingStart="12dp"
+            android:paddingEnd="1dp"
+            android:text="తెలుగు"
+            android:textFontWeight="700"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/radioKannada"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:buttonTint="@color/light_green"
+            android:hint="Kannada"
+            android:paddingStart="12dp"
+            android:paddingEnd="1dp"
+            android:text="ಕನ್ನಡ"
+            android:textFontWeight="700"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/radioHindi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:buttonTint="@color/light_green"
+            android:hint="Hindi"
+            android:paddingStart="12dp"
+            android:paddingEnd="1dp"
+            android:text="हिन्दी"
+            android:textFontWeight="700"
+            android:textSize="18sp" />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/applybtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/apply"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textFontWeight="600"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

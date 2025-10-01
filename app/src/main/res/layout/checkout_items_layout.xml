@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#F8F8F8"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <ImageView
+            android:id="@+id/imgviewcartitem"
+            android:layout_width="100dp"
+            android:layout_height="120dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/white"
+            android:contentDescription="Image"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/fruitsvegetables" />
+
+        <TextView
+            android:id="@+id/txtviewproductname"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/custom_font"
+            android:maxLines="1"
+            android:textColor="@color/black"
+            android:textFontWeight="700"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imgviewcartitem"
+            app:layout_constraintTop_toTopOf="@+id/imgviewcartitem"
+            tools:text="TextView" />
+
+        <TextView
+            android:id="@+id/txtviewquantitypetxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/custom_font"
+            android:background="@drawable/quantity_background"
+            android:textColor="@color/white"
+            android:textFontWeight="600"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/txtviewproductname"
+            app:layout_constraintTop_toBottomOf="@+id/txtviewproductname"
+            tools:text="Per Kilogram" />
+
+
+        <TextView
+            android:id="@+id/txtvieworgPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:fontFamily="@font/custom_font"
+            android:maxLength="5"
+            android:textColor="@color/grey"
+            android:textFontWeight="600"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/imgvieworgprice"
+            app:layout_constraintStart_toEndOf="@+id/imgvieworgprice"
+            app:layout_constraintTop_toTopOf="@+id/imgvieworgprice"
+            tools:text="1233335" />
+
+
+        <ImageView
+            android:id="@+id/imgvieworgprice"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/txtviewofferPrice"
+            app:layout_constraintStart_toEndOf="@+id/txtviewofferPrice"
+            app:layout_constraintTop_toTopOf="@+id/txtviewofferPrice"
+            app:srcCompat="@drawable/rupee_indian"
+            app:tint="@color/grey" />
+
+
+        <ImageView
+            android:id="@+id/imgviewofferprice"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="@+id/txtviewquantitypetxt"
+            app:layout_constraintTop_toBottomOf="@+id/txtviewquantitypetxt"
+            app:srcCompat="@drawable/rupee_indian"
+            app:tint="@color/black" />
+
+        <TextView
+            android:id="@+id/txtviewofferPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:fontFamily="@font/custom_font"
+            android:maxLength="5"
+            android:textColor="@color/black"
+            android:textFontWeight="600"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/imgviewofferprice"
+            app:layout_constraintStart_toEndOf="@+id/imgviewofferprice"
+            app:layout_constraintTop_toTopOf="@+id/imgviewofferprice"
+            tools:text="1233335" />
+
+        <TextView
+            android:id="@+id/txtviewexpecteddelivery"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/imgviewcartitem"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/imgviewofferprice"
+            app:layout_constraintTop_toBottomOf="@+id/txtviewofferPrice"
+            tools:text="Expected delivery by september 25" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/txtviewofferPrice"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/txtviewquantitypetxt">
+
+            <ImageView
+                android:id="@+id/txtviewreducequantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginEnd="8dp"
+                android:background="@color/green"
+                android:clickable="true"
+                android:src="@drawable/minus_24"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/txtviewquantity"
+                android:layout_width="20dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:fontFamily="@font/custom_font"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textFontWeight="600"
+                android:textSize="18sp"
+                tools:text="10" />
+
+            <ImageView
+                android:id="@+id/txviewaddequantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:background="@color/green"
+                android:clickable="true"
+                android:src="@drawable/plus_math_24"
+                app:tint="@color/white" />
+
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

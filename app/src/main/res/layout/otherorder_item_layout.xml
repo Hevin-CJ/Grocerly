@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="140dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:backgroundTint="@color/white"
+    app:strokeWidth="2dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginEnd="3dp"
+    android:layout_marginStart="3dp"
+    app:strokeColor="@color/light_grey">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <ImageView
+            android:id="@+id/imgviewcartitem"
+            android:layout_width="100dp"
+            android:layout_height="0dp"
+            android:contentDescription="Image"
+            android:scaleType="centerCrop"
+            android:background="@color/white"
+            tools:src="@drawable/fruitsvegetables"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
+
+        <TextView
+            android:id="@+id/txtviewproductname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/custom_font"
+            android:textColor="@color/grey"
+            android:textFontWeight="700"
+            android:textSize="16sp"
+            android:maxLength="15"
+            app:layout_constraintStart_toEndOf="@+id/imgviewcartitem"
+            app:layout_constraintTop_toTopOf="@+id/imgviewcartitem"
+            tools:text="TextView" />
+
+        <TextView
+            android:id="@+id/txtviewPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/custom_font"
+            tools:text="125"
+            android:maxLength="5"
+            android:textColor="@color/grey"
+            android:textFontWeight="600"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/txtviewproductname"
+            app:layout_constraintTop_toBottomOf="@+id/txtviewproductname" />
+
+
+
+
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            app:layout_constraintBottom_toBottomOf="@+id/txtviewPrice"
+            app:layout_constraintStart_toEndOf="@+id/txtviewPrice"
+            app:layout_constraintTop_toTopOf="@+id/txtviewPrice"
+            app:srcCompat="@drawable/rupee_indian"
+            app:tint="@color/grey" />
+
+        <TextView
+            android:id="@+id/txtviewexpecteddelivery"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp"
+            android:textColor="@color/grey"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/txtviewPrice"
+            app:layout_constraintTop_toBottomOf="@+id/txtviewPrice"
+            tools:text="Expected delivery by september 25" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

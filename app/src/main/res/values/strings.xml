@@ -1,0 +1,99 @@
+<resources>
+    <string name="app_name">Grocerly</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="email">Email</string>
+    <string name="no_favourites">No Favourites</string>
+    <string name="cart">Cart</string>
+    <string name="no_items_found">No Items Found!</string>
+    <string name="favourites">Favourites</string>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="profile">Profile</string>
+    <string name="menu">Menu</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="signupemail">Email</string>
+    <string name="signup_password">Password</string>
+    <string name="signup">SignUp</string>
+    <string name="login">Login</string>
+    <string name="have_an_account">Have an account ?</string>
+    <string name="add_a_new_address">+ Add a new address</string>
+    <string name="no_address_yet">No Address Yet</string>
+    <string name="select_language">Select Language</string>
+    <string name="saved_debit_credit_cards">Saved Debit/Credit Cards</string>
+    <string name="saved_addresses">Saved Addresses</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="account_settings">Account Settings:</string>
+    <string name="coupons">Coupons</string>
+    <string name="help_center">Help Center</string>
+    <string name="wishlist">Wishlist</string>
+    <string name="orders">Orders</string>
+    <string name="login_signup">SignUp</string>
+    <string name="create_an_account">Create an account ?</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="password">Password</string>
+    <string name="login_login">Login</string>
+    <string name="update">Update</string>
+    <string name="phone_no">Phone No.</string>
+    <string name="apply">Apply</string>
+    <string name="go_to_checkout">Go to Checkout</string>
+    <string name="first_name_required">First Name (Required)</string>
+    <string name="phone_number_required">Phone Number (Required)</string>
+    <string name="alternate_phone_number">Alternate Phone Number</string>
+    <string name="pincode_required">Pincode (Required)</string>
+    <string name="state_required">State (Required)</string>
+    <string name="city_required">City (Required)</string>
+    <string name="house_building_address_required">House/Building Address (Required)</string>
+    <string name="add_near_famous_shop_building_landmark">Add Near Famous Shop/Building/LandMark</string>
+    <string name="work">Work</string>
+    <string name="other">Other</string>
+    <string name="loading">Loading...</string>
+    <string name="add_cart">Add To Cart</string>
+    <string name="are_you_sure_to_change_registered_email">Are you sure to change Registered email ?</string>
+    <string name="change_credentials">Change Credentials ?</string>
+    <string name="new_email">New Email</string>
+    <string name="cancel">Cancel</string>
+    <string name="cart_text">Cart</string>
+    <string name="home_address">Home</string>
+    <string name="type_of_address">Type Of Address</string>
+    <string name="save_address">Save Address</string>
+    <string name="use_my_location">Use My Location</string>
+    <string name="profile_log_out">Log out</string>
+    <string name="choose_language">Choose Language</string>
+    <string name="itemimage">ItemImage</string>
+    <string name="credentials_update">Update</string>
+    <string name="credentials_password">Password</string>
+    <string name="cred_email">Email</string>
+    <string name="profile_email">Email</string>
+    <string name="profile_last_name">Last Name</string>
+    <string name="profile_first_name">First Name</string>
+    <string name="add_new_card">Add New Card</string>
+    <string name="no_saved_card">No Saved Card</string>
+    <string name="holder_name">Holder Name</string>
+    <string name="card_number">Card Number</string>
+    <string name="expiry_date">Expiry Date</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="cardtype">CardType</string>
+    <string name="update_changes">Update Changes</string>
+    <string name="cvv">CVV</string>
+    <string name="eg_john_doe">eg:John Doe</string>
+    <string name="edit_card">Edit Card</string>
+    <string name="eg_1234_5678_9012_3456">eg: 1234 5678 9012 3456</string>
+    <string name="card_type">Card Type</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="price_details">Price Details</string>
+    <string name="order_placed">Order Placed</string>
+    <string name="back_to_home">Back To Home</string>
+    <string name="orderplaced">OrderPlaced</string>
+    <string name="search_here">Search here</string>
+
+
+
+    <string name="facebook_app_id" translatable="false">1375792877291930</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb1375792877291930</string>
+    <string name="facebook_client_token" translatable="false">b847a793b674244aec9fbede3f632b05</string>
+    <string name="you_have_no_orders_yet">You have no orders yet.</string>
+
+
+</resources>

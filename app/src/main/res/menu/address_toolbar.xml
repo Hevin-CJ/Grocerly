@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/editaddress"
+        android:title="Edit"
+        app:showAsAction="never"
+        />
+
+    <item android:id="@+id/deleteaddress"
+        android:title="Delete"
+        app:showAsAction="never"
+        />
+
+    <item android:id="@+id/setDefault"
+        android:title="Set as Default"
+        app:showAsAction="never"
+        />
+
+</menu>

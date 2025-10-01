@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@color/white"
+    tools:context=".fragments.Search">
+
+
+    <LinearLayout
+        android:id="@+id/layoutpredefineditems1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txviewfrequent">
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnapple"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/searchview_background"
+            android:fontFamily="@font/custom_font"
+            android:text="Apple"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textFontWeight="600"
+            android:textSize="14sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnorange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/searchview_background"
+            android:fontFamily="@font/custom_font"
+            android:text="Orange"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textFontWeight="600"
+            android:textSize="14sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnDetergent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/searchview_background"
+            android:fontFamily="@font/custom_font"
+            android:text="Detergent"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textFontWeight="600"
+            android:textSize="14sp" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSoaps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/searchview_background"
+            android:fontFamily="@font/custom_font"
+            android:text="Soaps"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textFontWeight="600"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutpredefineditems2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="@+id/layoutpredefineditems1"
+        app:layout_constraintStart_toStartOf="@+id/layoutpredefineditems1"
+        app:layout_constraintTop_toBottomOf="@+id/layoutpredefineditems1">
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnFruits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/searchview_background"
+            android:fontFamily="@font/custom_font"
+            android:text="Fruits"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textFontWeight="600"
+            android:textSize="14sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnBanana"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/searchview_background"
+            android:fontFamily="@font/custom_font"
+            android:text="Banana"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textFontWeight="600"
+            android:textSize="14sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnEgg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/searchview_background"
+            android:fontFamily="@font/custom_font"
+            android:text="Egg"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textFontWeight="600"
+            android:textSize="14sp" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnGrapes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/searchview_background"
+            android:fontFamily="@font/custom_font"
+            android:text="Grapes"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textFontWeight="600"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txviewfrequent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/custom_font"
+        android:text="Frequent Searches"
+        android:textColor="@color/grey"
+        android:textFontWeight="600"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@+id/layoutpredefineditems1"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar2" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcviewsearchadaptor"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:clipToPadding="false"
+        android:scrollIndicators="right"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar2" />
+
+    <TextView
+        android:id="@+id/txtviewnoitems"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/custom_font"
+        android:text="No Items Found!"
+        android:textColor="@color/grey"
+        android:textFontWeight="700"
+        android:textSize="25sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/rcviewsearchadaptor"
+        app:layout_constraintEnd_toEndOf="@+id/rcviewsearchadaptor"
+        app:layout_constraintStart_toStartOf="@+id/rcviewsearchadaptor"
+        app:layout_constraintTop_toTopOf="@+id/rcviewsearchadaptor" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:backgroundTint="@color/white"
+        android:gravity="center"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/srchview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="16dp"
+                android:layout_weight="1"
+                android:background="@drawable/searchview_background"
+                android:fontFamily="@font/custom_font"
+                android:gravity="center"
+                android:textFontWeight="600"
+                app:iconifiedByDefault="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:queryHint="Search Items (eg:Apple)">
+
+            </androidx.appcompat.widget.SearchView>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/cancelbtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:fontFamily="@font/custom_font"
+                android:gravity="center"
+                android:text="Cancel"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+
+    </androidx.appcompat.widget.Toolbar>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

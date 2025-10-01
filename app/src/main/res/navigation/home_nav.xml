@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_nav"
+    app:startDestination="@id/home">
+
+    <fragment
+        android:id="@+id/home"
+        android:name="com.example.grocerly.fragments.Home"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_home_to_cart"
+            app:destination="@id/cart" />
+        <action
+            android:id="@+id/action_home_to_customSearchView"
+            app:destination="@id/customSearchView" />
+    </fragment>
+    <fragment
+        android:id="@+id/cart"
+        android:name="com.example.grocerly.fragments.Cart"
+        android:label="fragment_cart"
+        tools:layout="@layout/fragment_cart" >
+        <action
+            android:id="@+id/action_cart_to_home"
+            app:destination="@id/home" />
+        <action
+            android:id="@+id/action_cart_to_checkout"
+            app:destination="@id/checkout" />
+
+
+    </fragment>
+    <fragment
+        android:id="@+id/profile"
+        android:name="com.example.grocerly.fragments.Profile"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" >
+
+        <action
+            android:id="@+id/action_profile_to_savedAddress"
+            app:destination="@id/savedAddress" />
+        <action
+            android:id="@+id/action_profile_to_editProfile"
+            app:destination="@id/editProfile" />
+        <action
+            android:id="@+id/action_profile_to_editLanguage"
+            app:destination="@id/editLanguage" />
+        <action
+            android:id="@+id/action_profile_to_savedCards"
+            app:destination="@id/savedCards" />
+        <action
+            android:id="@+id/action_profile_to_orders"
+            app:destination="@id/orders" />
+    </fragment>
+    <fragment
+        android:id="@+id/menu"
+        android:name="com.example.grocerly.fragments.Menu"
+        android:label="fragment_menu"
+        tools:layout="@layout/fragment_menu" />
+    <fragment
+        android:id="@+id/search"
+        android:name="com.example.grocerly.fragments.Search"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" />
+    <fragment
+        android:id="@+id/favourites"
+        android:name="com.example.grocerly.fragments.Favourites"
+        android:label="fragment_favourites"
+        tools:layout="@layout/fragment_favourites" />
+    <fragment
+        android:id="@+id/editProfile"
+        android:name="com.example.grocerly.fragments.EditProfile"
+        android:label="fragment_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" >
+        <action
+            android:id="@+id/action_editProfile_to_profile"
+            app:destination="@id/profile" />
+    </fragment>
+    <fragment
+        android:id="@+id/savedAddress"
+        android:name="com.example.grocerly.fragments.SavedAddress"
+        android:label="fragment_saved_address"
+        tools:layout="@layout/fragment_saved_address" >
+        <action
+            android:id="@+id/action_savedAddress_to_addAddress"
+            app:destination="@id/addAddress" />
+        <action
+            android:id="@+id/action_savedAddress_to_updateAddress"
+            app:destination="@id/updateAddress"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/savedAddress" />
+        <action
+            android:id="@+id/action_savedAddress_to_profile"
+            app:destination="@id/profile" />
+
+
+    </fragment>
+    <fragment
+        android:id="@+id/addAddress"
+        android:name="com.example.grocerly.fragments.AddAddress"
+        android:label="fragment_add_address"
+        tools:layout="@layout/fragment_add_address" >
+        <action
+            android:id="@+id/action_addAddress_to_savedAddress"
+            app:destination="@id/savedAddress" />
+        <action
+            android:id="@+id/action_addAddress_to_changeAddress"
+            app:destination="@id/changeAddress" />
+        <action
+            android:id="@+id/action_addAddress_to_checkout"
+            app:destination="@id/checkout" />
+    </fragment>
+    <fragment
+        android:id="@+id/updateAddress"
+        android:name="com.example.grocerly.fragments.UpdateAddress"
+        android:label="fragment_update_address"
+        tools:layout="@layout/fragment_update_address" >
+        <action
+            android:id="@+id/action_updateAddress_to_savedAddress"
+            app:destination="@id/savedAddress" />
+        <argument
+            android:name="updateData"
+            app:argType="com.example.grocerly.model.Address" />
+        <action
+            android:id="@+id/action_updateAddress_to_checkout"
+            app:destination="@id/checkout" />
+        <argument
+            android:name="bundlePass"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/editLanguage"
+        android:name="com.example.grocerly.fragments.EditLanguage"
+        android:label="fragment_edit_language"
+        tools:layout="@layout/fragment_edit_language" >
+
+        <action
+            android:id="@+id/action_editLanguage_to_profile"
+            app:destination="@id/profile" />
+    </fragment>
+    <fragment
+        android:id="@+id/savedCards"
+        android:name="com.example.grocerly.fragments.SavedCards"
+        android:label="fragment_saved_cards"
+        tools:layout="@layout/fragment_saved_cards" >
+
+        <action
+            android:id="@+id/action_savedCards_to_upsertCard"
+            app:destination="@id/upsertCard" />
+        <action
+            android:id="@+id/action_savedCards_to_profile"
+            app:destination="@id/profile" />
+    </fragment>
+    <fragment
+        android:id="@+id/upsertCard"
+        android:name="com.example.grocerly.fragments.UpsertCard"
+        android:label="fragment_upsert_card"
+        tools:layout="@layout/fragment_upsert_card" >
+        <action
+            android:id="@+id/action_upsertCard_to_savedCards"
+            app:destination="@id/savedCards" />
+        <argument
+            android:name="isUpdate"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <argument
+            android:name="savedCard"
+            app:argType="com.example.grocerly.model.Card"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/checkout"
+        android:name="com.example.grocerly.fragments.Checkout"
+        android:label="fragment_checkout"
+        tools:layout="@layout/fragment_checkout">
+
+
+        <action
+            android:id="@+id/action_checkout_to_changeAddress"
+            app:destination="@id/changeAddress" />
+        <action
+            android:id="@+id/action_checkout_to_addAddress"
+            app:destination="@id/addAddress" />
+        <action
+            android:id="@+id/action_checkout_to_updateAddress"
+            app:destination="@id/updateAddress" />
+        <action
+            android:id="@+id/action_checkout_to_payments"
+            app:destination="@id/payments" />
+        <action
+            android:id="@+id/action_checkout_to_cart"
+            app:destination="@id/cart" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/changeAddress"
+        android:name="com.example.grocerly.fragments.ChangeAddress"
+        android:label="fragment_change_address"
+        tools:layout="@layout/fragment_change_address" >
+        <action
+            android:id="@+id/action_changeAddress_to_addAddress"
+            app:destination="@id/addAddress" />
+        <action
+            android:id="@+id/action_changeAddress_to_checkout"
+            app:destination="@id/checkout" />
+    </fragment>
+    <fragment
+        android:id="@+id/payments"
+        android:name="com.example.grocerly.fragments.Payments"
+        android:label="fragment_payments"
+        tools:layout="@layout/fragment_payments" >
+        <action
+            android:id="@+id/action_payments_to_checkout"
+            app:destination="@id/checkout" />
+        <action
+            android:id="@+id/action_payments_to_orderPlaced"
+            app:destination="@id/orderPlaced" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/orderPlaced"
+        android:name="com.example.grocerly.fragments.OrderPlaced"
+        android:label="fragment_order_placed"
+        tools:layout="@layout/fragment_order_placed" >
+        <action
+            android:id="@+id/action_orderPlaced_to_home"
+            app:destination="@id/home" />
+    </fragment>
+    <fragment
+        android:id="@+id/orders"
+        android:name="com.example.grocerly.fragments.Orders"
+        android:label="fragment_orders"
+        tools:layout="@layout/fragment_orders" >
+        <action
+            android:id="@+id/action_orders_to_profile"
+            app:destination="@id/profile" />
+        <action
+            android:id="@+id/action_orders_to_orderDetails"
+            app:destination="@id/orderDetails" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderDetails"
+        android:name="com.example.grocerly.fragments.OrderDetails"
+        android:label="fragment_order_details"
+        tools:layout="@layout/fragment_order_details" >
+        <action
+            android:id="@+id/action_orderDetails_to_orders"
+            app:destination="@id/orders" />
+        <argument
+            android:name="cartItem"
+            app:argType="com.example.grocerly.model.CartProduct" />
+        <argument
+            android:name="order"
+            app:argType="com.example.grocerly.model.Order" />
+    </fragment>
+    <fragment
+        android:id="@+id/customSearchView"
+        android:name="com.example.grocerly.fragments.CustomSearchView"
+        android:label="fragment_custom_search_view"
+        tools:layout="@layout/fragment_custom_search_view" >
+        <action
+            android:id="@+id/action_customSearchView_to_home"
+            app:destination="@id/home" />
+        <argument
+            android:name="category"
+            app:argType="com.example.grocerly.utils.ProductCategory" />
+    </fragment>
+</navigation>
