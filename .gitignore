@@ -1,0 +1,39 @@
+# Built application files
+*.apk
+*.ap_
+*.aab
+*.dex
+
+# Files for the ART/Dalvik VM
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+build/
+.gradle/
+.navigation/
+captures/
+.externalNativeBuild/
+
+# Local configuration file (SDK path, etc)
+local.properties
+
+# Log files
+*.log
+
+# Windows thumbnail db
+Thumbs.db
+
+# Mac OS X files
+.DS_Store
+
+# Android Studio
+*.iml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/libraries/
+.idea/dataSources/
+
+app/google-services.json/
