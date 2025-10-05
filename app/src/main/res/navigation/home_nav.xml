@@ -52,6 +52,9 @@
         <action
             android:id="@+id/action_profile_to_orders"
             app:destination="@id/orders" />
+        <action
+            android:id="@+id/action_profile_to_helpCenter"
+            app:destination="@id/helpCenter" />
     </fragment>
     <fragment
         android:id="@+id/menu"
@@ -265,5 +268,14 @@
         <argument
             android:name="category"
             app:argType="com.example.grocerly.utils.ProductCategory" />
+    </fragment>
+    <fragment
+        android:id="@+id/helpCenter"
+        android:name="com.example.grocerly.fragments.HelpCenter"
+        android:label="fragment_help_center"
+        tools:layout="@layout/fragment_help_center" >
+        <action
+            android:id="@+id/action_helpCenter_to_profile"
+            app:destination="@id/profile" />
     </fragment>
 </navigation>

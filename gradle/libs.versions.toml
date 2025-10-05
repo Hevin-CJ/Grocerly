@@ -73,9 +73,12 @@ checkout = { module = "com.razorpay:checkout", version.ref = "checkout" }
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coilCompose" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilCompose" }
+com-google-firebase-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "daggerCompiler" }
 facebook-login = { module = "com.facebook.android:facebook-login", version.ref = "facebookLogin" }
+firebase-ai = { module = "com.google.firebase:firebase-ai" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-appcheck-playintegrity = { module = "com.google.firebase:firebase-appcheck-playintegrity" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-bom-v3380 = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
 firebase-dynamic-links = { module = "com.google.firebase:firebase-dynamic-links" }

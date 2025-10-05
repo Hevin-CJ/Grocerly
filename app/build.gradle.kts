@@ -80,6 +80,8 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.google.firebase.dynamic.links)
     implementation(libs.google.firebase.analytics)
+    implementation(libs.firebase.appcheck.playintegrity)
+    implementation(libs.com.google.firebase.firebase.analytics)
 
     //livedata
 
@@ -164,6 +166,8 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
 
+    //gemini api
+    implementation(libs.firebase.ai)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

@@ -55,6 +55,13 @@ class Profile : Fragment() {
         actionToSavedCards()
         actionToOrders()
         observeAccountErrorDetails()
+        setActionToHelpCenter()
+    }
+
+    private fun setActionToHelpCenter() {
+        binding.Helpcenterbtn.setOnClickListener {
+            findNavController().navigate(R.id.action_profile_to_helpCenter,null, NavOptions.Builder().setLaunchSingleTop(true).setPopUpTo(R.id.profile,false).build())
+        }
     }
 
     private fun actionToOrders() {
