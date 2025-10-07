@@ -19,6 +19,7 @@ data class Product(
     val category: ProductCategory= ProductCategory.selectcatgory,
     val itemRating:Double ?= 5.0,
     val totalRating:Int ?= 0,
+    val searchKeywords: List<String> = listOf(),
 
     val isFavourite: Boolean=false,
     val isInCart: Boolean=false,

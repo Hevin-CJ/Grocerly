@@ -39,16 +39,24 @@ class HomeRepoImpl @Inject constructor(private val auth: FirebaseAuth,private va
 
          trySend(NetworkResult.Loading())
 
-             val listener = db.collectionGroup(PRODUCTS).addSnapshotListener { snapshot, error ->
+
+         val query = db.collectionGroup(PRODUCTS)
+             .whereEqualTo("isEnabled", true)
+
+             val listener = query.addSnapshotListener { snapshot, error ->
                  if (error != null) {
                      trySend(NetworkResult.Error(error.message)).isFailure
+                     Log.d("errorfound",error.message.toString())
                      return@addSnapshotListener
                  }
 
-                 snapshot?.let {
-                     val groupedProducts = it.toObjects(Product::class.java).groupBy {
-                         it.category
-                     }
+                 if (snapshot == null || snapshot.isEmpty) {
+                     trySend(NetworkResult.Success(emptyList()))
+                     return@addSnapshotListener
+                 }
+
+
+                     val groupedProducts = snapshot.documents.mapNotNull { it.toObject(Product::class.java) }.groupBy { it.category }
 
                      val categories = groupedProducts.map { (category, products) ->
                          ParentCategoryItem(
@@ -58,8 +66,6 @@ class HomeRepoImpl @Inject constructor(private val auth: FirebaseAuth,private va
                      }.sortedBy { it.categoryName }
 
                      trySend(NetworkResult.Success(categories))
-                 }
-
 
 
              }

@@ -1,5 +1,6 @@
 package com.example.grocerly.Repository.remote
 
+import android.util.Log
 import androidx.compose.ui.text.toUpperCase
 import com.example.grocerly.model.Product
 import com.example.grocerly.utils.Constants.PARTNERS
@@ -19,31 +20,35 @@ class SearchRepoImpl@Inject constructor(private val db: FirebaseFirestore,privat
 
     fun searchProduct(productName: String): Flow<NetworkResult<List<Product>>> = callbackFlow {
 
-          trySend(NetworkResult.Loading())
+        trySend(NetworkResult.Loading())
 
-             val queryText = productName.trim().uppercase(Locale.getDefault())
+        val queryText = productName.lowercase(Locale.getDefault()).trim()
 
-            val listener = db.collectionGroup(PRODUCTS)
-                .whereGreaterThanOrEqualTo("itemName",queryText)
-                .whereLessThanOrEqualTo("itemName", queryText + "\uf8ff")
-                .limit(15)
-                .addSnapshotListener { snapshot,error ->
+        var query = db.collectionGroup(PRODUCTS)
 
-                    if (error!=null){
-                        trySend(NetworkResult.Error(error.message))
-                        return@addSnapshotListener
-                    }
+        if (queryText.isNotBlank()) {
+           query =  query.whereArrayContains("searchKeywords", queryText)
+        }
 
-                    snapshot?.let {
-                        val productList = snapshot.documents.mapNotNull { it.toObject(Product::class.java) }
-                        trySend(NetworkResult.Success(productList))
-                    }
+        val listener = query.limit(20).addSnapshotListener { snapshot, error ->
 
-
+                if (error != null) {
+                    trySend(NetworkResult.Error(error.message))
+                    Log.d("search-error", error.message.toString())
+                    return@addSnapshotListener
                 }
-            awaitClose{
-                listener.remove()
+
+                snapshot?.let {
+                    val productList =
+                        snapshot.documents.mapNotNull { it.toObject(Product::class.java) }
+                    trySend(NetworkResult.Success(productList))
+                }
+
+
             }
+        awaitClose {
+            listener.remove()
+        }
     }
 
 }
