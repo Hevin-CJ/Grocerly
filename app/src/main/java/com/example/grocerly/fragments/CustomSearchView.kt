@@ -18,6 +18,7 @@ import com.example.grocerly.databinding.FragmentCustomSearchViewBinding
 import com.example.grocerly.interfaces.ChildCategoryListener
 import com.example.grocerly.model.CartProduct
 import com.example.grocerly.model.FavouriteItem
+import com.example.grocerly.model.WishItem
 import com.example.grocerly.utils.GridSpacingItemDecoration
 import com.example.grocerly.utils.NetworkResult
 import com.example.grocerly.viewmodel.CustomSearchViewModel
@@ -134,6 +135,10 @@ class CustomSearchView : Fragment() {
 
                 override fun addProductToFavourites(favouriteItem: FavouriteItem) {
                     customSearchViewModel.addFavouriteIntoCartFirebase(favouriteItem)
+                }
+
+                override fun addProductToWishList(wishItem: WishItem) {
+                    
                 }
 
             })

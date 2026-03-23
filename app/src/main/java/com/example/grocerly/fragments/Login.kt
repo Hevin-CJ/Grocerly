@@ -70,17 +70,14 @@ class Login : Fragment() {
         callbackManager = CallbackManager.Factory.create()
 
         binding.facebookbtn.setOnClickListener {
+            val currentToken = AccessToken.getCurrentAccessToken()
 
-            binding.facebookbtn.setOnClickListener {
-                val currentToken = AccessToken.getCurrentAccessToken()
-
-                if (currentToken != null && !currentToken.isExpired) {
-                    Log.d("FacebookLogin", "Token found, attempting express login.")
-                    loginViewModel.signInWithFacebook(currentToken)
-                } else {
-                    Log.d("FacebookLogin", "No valid token, starting normal login flow.")
-                    LoginManager.getInstance().logInWithReadPermissions(this, listOf("email", "public_profile"))
-                }
+            if (currentToken != null && !currentToken.isExpired) {
+                Log.d("FacebookLogin", "Token found, attempting express login.")
+                loginViewModel.signInWithFacebook(currentToken)
+            } else {
+                Log.d("FacebookLogin", "No valid token, starting normal login flow.")
+                LoginManager.getInstance().logInWithReadPermissions(this, callbackManager,listOf("email", "public_profile"))
             }
 
         }
@@ -183,14 +180,11 @@ class Login : Fragment() {
                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
            }
            startActivity(intent)
+           requireActivity().finish()
        }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        callbackManager.onActivityResult(requestCode, resultCode, data)
-    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

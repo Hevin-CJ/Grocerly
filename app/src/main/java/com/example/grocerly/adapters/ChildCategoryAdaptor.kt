@@ -14,11 +14,14 @@ import com.example.grocerly.interfaces.ChildCategoryListener
 import com.example.grocerly.model.CartProduct
 import com.example.grocerly.model.FavouriteItem
 import com.example.grocerly.model.Product
+import com.example.grocerly.model.WishItem
 
 class ChildCategoryAdaptor(private val listener: ChildCategoryListener) : RecyclerView.Adapter<ChildCategoryAdaptor.ChildCategoryViewHolder>() {
 
     private var favoritesList: List<FavouriteItem> = emptyList()
     private var cartItems: List<CartProduct> = emptyList()
+
+    private var wishItems: List<WishItem> = emptyList()
 
     private val diffUtil = object : DiffUtil.ItemCallback<Product>(){
         override fun areItemsTheSame(
@@ -62,6 +65,10 @@ class ChildCategoryAdaptor(private val listener: ChildCategoryListener) : Recycl
                 )
             }
 
+            binding.addtowishlistButton.setOnClickListener {
+                listener.addProductToWishList(WishItem(id = childCategoryItem.productId,item = childCategoryItem))
+            }
+
             if (cartItems.any { it.product.productId == childCategoryItem.productId }){
                 binding.addtocartbtn.setImageDrawable(ContextCompat.getDrawable(binding.root.context,R.drawable.checkcircleadded))
             }else{
@@ -77,6 +84,13 @@ class ChildCategoryAdaptor(private val listener: ChildCategoryListener) : Recycl
                 )
             } else {
                 binding.addtofavouritesbtn.clearColorFilter()
+            }
+
+
+            if (wishItems.any { it.item.productId == childCategoryItem.productId }){
+                binding.addtowishlistButton.setImageResource(R.drawable.wishlist_done)
+            }else{
+                binding.addtowishlistButton.setImageResource(R.drawable.wishlist)
             }
 
         }
@@ -124,6 +138,11 @@ class ChildCategoryAdaptor(private val listener: ChildCategoryListener) : Recycl
 
     fun setProducts(products: List<Product>){
         asyncDiffer.submitList(products)
+    }
+
+    fun setWishItems(wishItems: List<WishItem>){
+        this.wishItems = wishItems
+        notifyDataSetChanged()
     }
 
 }

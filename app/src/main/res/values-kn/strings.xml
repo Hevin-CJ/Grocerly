@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ಗ್ರೋಸರ್‌ಲಿ</string>
-    <string name="hello_blank_fragment">ಹೆಲೋ ಬ್ಲ್ಯಾಂಕ್ ಫ್ರಾಗ್ಮೆಂಟ್</string>
     <string name="email">ಇಮೇಲ್</string>
     <string name="no_favourites">ಇಷ್ಟಪಟ್ಟವುಗಳು ಇಲ್ಲ</string>
     <string name="cart">ಕಾರ್ಟ್</string>
@@ -48,7 +47,6 @@
     <string name="work">ಕೆಲಸ</string>
     <string name="other">ಇತರೆ</string>
     <string name="loading">ಲೋಡ್ ಆಗುತ್ತಿದೆ...</string>
-    <string name="add_cart">ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಿ</string>
     <string name="are_you_sure_to_change_registered_email">ನೋಂದಾಯಿತ ಇಮೇಲ್ ಬದಲಾಯಿಸಲು ಖಚಿತವೇ?</string>
     <string name="change_credentials">ಪ್ರವೇಶ ಮಾಹಿತಿ ಬದಲಾಯಿಸಲು?</string>
     <string name="new_email">ಹೊಸ ಇಮೇಲ್</string>

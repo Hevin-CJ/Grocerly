@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">గ్రోసర్లీ</string>
-    <string name="hello_blank_fragment">హలో ఖాళీ భాగం</string>
     <string name="email">ఈమెయిల్</string>
     <string name="no_favourites">ఇష్టాలు లేవు</string>
     <string name="cart">కార్ట్</string>
@@ -48,7 +47,6 @@
     <string name="work">పని</string>
     <string name="other">ఇతర</string>
     <string name="loading">లోడ్ అవుతోంది...</string>
-    <string name="add_cart">కార్టులో జోడించండి</string>
     <string name="are_you_sure_to_change_registered_email">నమోదిత ఈమెయిల్‌ను మార్చాలని నిశ్చయించుకున్నారా?</string>
     <string name="change_credentials">లాగిన్ వివరాలు మార్చాలా?</string>
     <string name="new_email">కొత్త ఈమెయిల్</string>

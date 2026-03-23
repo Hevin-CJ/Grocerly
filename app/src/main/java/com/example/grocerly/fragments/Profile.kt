@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -23,6 +25,7 @@ import com.example.grocerly.utils.NetworkResult
 import com.example.grocerly.viewmodel.ProfileViewModel
 import com.google.android.play.integrity.internal.ac
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -33,12 +36,15 @@ class Profile : Fragment() {
 
     private val profileViewModel:ProfileViewModel by viewModels()
 
+    private lateinit var loadingDialogue: LoadingDialogue
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         profile = FragmentProfileBinding.inflate(inflater,container,false)
+        loadingDialogue = LoadingDialogue(requireContext())
         return binding.root
 
     }
@@ -56,6 +62,20 @@ class Profile : Fragment() {
         actionToOrders()
         observeAccountErrorDetails()
         setActionToHelpCenter()
+        setActionToWishList()
+        actionToCoupons()
+    }
+
+    private fun actionToCoupons() {
+        binding.couponbtn.setOnClickListener {
+            findNavController().navigate(R.id.action_profile_to_coupons,null, NavOptions.Builder().setLaunchSingleTop(true).setPopUpTo(R.id.profile,false).build())
+        }
+    }
+
+    private fun setActionToWishList() {
+        binding.wishlistbtn.setOnClickListener {
+            findNavController().navigate(R.id.action_profile_to_wishList,null, NavOptions.Builder().setLaunchSingleTop(true).setPopUpTo(R.id.profile,false).build())
+        }
     }
 
     private fun setActionToHelpCenter() {
@@ -138,30 +158,49 @@ class Profile : Fragment() {
 
     private fun observeLogoutState() {
         viewLifecycleOwner.lifecycleScope.launch {
-            profileViewModel.logoutState.collect{result->
-                when(result){
-                    is NetworkResult.Error -> {
-                        Toast.makeText(requireContext(),result.message, Toast.LENGTH_SHORT).show()
-                    }
-                    is NetworkResult.Loading -> {
-                        Toast.makeText(requireContext(),"Loading.. Please wait",Toast.LENGTH_SHORT).show()
-                    }
-                    is NetworkResult.Success -> {
-                        Toast.makeText(requireContext(),result.data,Toast.LENGTH_SHORT).show()
-                        lifecycleScope.launch {
-                            val intent = Intent(requireContext(), MainActivity::class.java).apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            }
-                            startActivity(intent)
-                        }
-
-                    }
-                    is NetworkResult.UnSpecified -> {
-
-                    }
-                }
-            }
+           viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+               profileViewModel.logoutState.collect{result->
+                   when(result){
+                       is NetworkResult.Error -> {
+                           loadingDialogue.dismiss()
+                           binding.apply {
+                               logoutbtn.visibility = View.VISIBLE
+                           }
+                           Toast.makeText(requireContext(),result.message, Toast.LENGTH_SHORT).show()
+                       }
+                       is NetworkResult.Loading -> {
+                           binding.apply {
+                               logoutbtn.visibility = View.VISIBLE
+                           }
+                           loadingDialogue.setText("Logging Out,Please wait....")
+                           loadingDialogue.show()
+                       }
+                       is NetworkResult.Success -> {
+                           binding.apply {
+                               logoutbtn.visibility = View.INVISIBLE
+                           }
+                           loadingDialogue.dismiss()
+                           Toast.makeText(requireContext(),result.data,Toast.LENGTH_SHORT).show()
+                           intentToMainActivity()
+                       }
+                       is NetworkResult.UnSpecified -> {
+                           loadingDialogue.dismiss()
+                           binding.apply {
+                               logoutbtn.visibility = View.VISIBLE
+                           }
+                       }
+                   }
+               }
+           }
         }
+    }
+
+    private fun intentToMainActivity() {
+
+        val intent = Intent(requireContext(), MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        startActivity(intent)
     }
 
     private fun setUpLoginOutButton() {

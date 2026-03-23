@@ -1,5 +1,7 @@
 package com.example.grocerly.fragments
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,28 +14,38 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.example.grocerly.R
+import com.example.grocerly.activity.MainActivity
 import com.example.grocerly.adapters.CategoryAdaptor
 import com.example.grocerly.adapters.OffersAdaptor
 import com.example.grocerly.adapters.ParentCategoryAdaptor
 import com.example.grocerly.databinding.CartActionLayoutBinding
 import com.example.grocerly.databinding.FragmentHomeBinding
+import com.example.grocerly.interfaces.AddressActionListener
 import com.example.grocerly.interfaces.ChildCategoryListener
 import com.example.grocerly.interfaces.SearchViewListener
+import com.example.grocerly.model.Address
 import com.example.grocerly.model.CartProduct
 import com.example.grocerly.model.Category
 import com.example.grocerly.model.FavouriteItem
+import com.example.grocerly.model.WishItem
+import com.example.grocerly.model.uievents.HomeUiEvents
+import com.example.grocerly.utils.LoadingDialogue
 import com.example.grocerly.utils.Mappers
 import com.example.grocerly.utils.Mappers.toCategory
 import com.example.grocerly.utils.Mappers.toOfferItemList
 import com.example.grocerly.utils.NetworkResult
+import com.example.grocerly.utils.PermissionManager
 import com.example.grocerly.utils.ProductCategory
 import com.example.grocerly.viewmodel.CartViewModel
+import com.example.grocerly.viewmodel.CheckoutViewModel
 import com.example.grocerly.viewmodel.FavouriteViewModel
 import com.example.grocerly.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,14 +58,12 @@ class Home : Fragment() {
     private var home: FragmentHomeBinding? = null
     private val binding get() = home!!
 
+    private lateinit var loadingDialogue: LoadingDialogue
+
     private var cartActionBinding: CartActionLayoutBinding? = null
 
-    private val offersAdaptor: OffersAdaptor by lazy { OffersAdaptor() }
+    private lateinit var offersAdaptor: OffersAdaptor
     private lateinit var categoryAdaptor: CategoryAdaptor
-
-    private val cartViewModel by activityViewModels<CartViewModel>()
-
-    private val favouriteViewModel by activityViewModels<FavouriteViewModel>()
 
     private val homeViewModel: HomeViewModel by viewModels()
 
@@ -63,6 +73,9 @@ class Home : Fragment() {
     private var currentScrollPosition = 0
 
     private val handler = Handler(Looper.getMainLooper())
+
+    private  var changeAddress: ChangeAddress?=null
+
 
    private val runnable = object : Runnable {
         override fun run() {
@@ -79,33 +92,184 @@ class Home : Fragment() {
         }
     }
 
+    private val requiredPermissions by lazy {
+        val permissions = mutableListOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions.add(Manifest.permission.POST_NOTIFICATIONS)
+            permissions.add(Manifest.permission.READ_MEDIA_IMAGES)
+        } else {
+            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+        permissions.toTypedArray()
+    }
+
+
+    private val permissionManager = PermissionManager(this) { permissionsMap ->
+        val allPermissionsGranted = permissionsMap.values.all { it }
+        if (allPermissionsGranted) {
+            Log.d("PERMISSION_CHECK", "All initial permissions granted.")
+        } else {
+            Log.w("PERMISSION_CHECK", "Some permissions were denied.")
+
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         home = FragmentHomeBinding.inflate(inflater, container, false)
+        loadingDialogue = LoadingDialogue(requireContext())
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        permissionManager.requestPermissions(requiredPermissions)
+
         setRcOfferAdapter()
         setToolBar()
         setRcViewParentCategoryAdaptor()
         setRcViewCategoryItem()
-        observeGetAllItems()
-        setCategoryItems()
-        observeProductFromFirebase()
-        observeOffersFromFirebase()
-        observeAddProductInCart()
-        observeAddedToFavouriteState()
-        showShimmerLayout()
-        observeCartItems()
-        observeHomeAddress()
         actionToSearch()
-        observeOffersErrorFromFirebase()
+        setChangeAddress()
+
+        observeUiStateAndEvents()
+        checkArgumentsForNotification()
     }
+
+    private fun observeUiStateAndEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+
+                launch {
+                    homeViewModel.uiState.collect { state ->
+
+                        if (state.isLoading && state.products.isEmpty()) {
+                            binding.shimmerlayouthome.startShimmer()
+                            binding.shimmerlayouthome.visibility = View.VISIBLE
+                            binding.addresstoolbar.visibility = View.INVISIBLE
+                            binding.scrollviewhome.visibility = View.INVISIBLE
+                        } else {
+                            binding.shimmerlayouthome.stopShimmer()
+                            binding.shimmerlayouthome.visibility = View.INVISIBLE
+                            binding.addresstoolbar.visibility = View.VISIBLE
+                            binding.scrollviewhome.visibility = View.VISIBLE
+                        }
+
+                        if (state.isLoading){
+                            loadingDialogue.show()
+                        }else{
+                            loadingDialogue.dismiss()
+                        }
+
+                        binding.txtviewaddress.text = state.homeAddress
+
+                        parentCategoryAdaptor.setFavouriteItems(state.favouriteItems)
+
+                        parentCategoryAdaptor.setCartItems(state.cartItems)
+                        updateCardBadge(state.cartItems.size)
+
+
+                        parentCategoryAdaptor.setParentCategoryItems(state.products)
+
+                        parentCategoryAdaptor.setWishlistItems(state.wishListItems)
+
+                        if (state.localOffers.isNotEmpty()) {
+                            offersAdaptor.setOffers(state.localOffers)
+                        }
+
+                        if (state.localCategories.isNotEmpty()) {
+                            categoryAdaptor.setItem(state.localCategories.map { it.toCategory() })
+                        }
+                    }
+                }
+
+
+                launch {
+                    homeViewModel.uiEvents.collect { event ->
+                        when (event) {
+                            is HomeUiEvents.ShowMessage -> {
+                                Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
+                            }
+
+                            is HomeUiEvents.ActionToOrderDetails -> {
+                                val bundle = Bundle().apply {
+                                    putParcelable("cartItem", event.cartProduct)
+                                    putParcelable("order", event.order)
+                                }
+
+                                findNavController().navigate(
+                                    R.id.orderDetails,
+                                    bundle,
+                                    NavOptions.Builder()
+                                        .setPopUpTo(R.id.home, false)
+                                        .setLaunchSingleTop(true)
+                                        .build()
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    private fun checkArgumentsForNotification() {
+        val orderId = arguments?.getString("notification_orderId")
+        val productId = arguments?.getString("notification_productId")
+
+        if (orderId != null && productId != null) {
+            arguments?.remove("notification_orderId")
+            arguments?.remove("notification_productId")
+
+            homeViewModel.fetchOrderForNotification(orderId, productId)
+        }
+    }
+
+
+    private fun setChangeAddress() {
+        binding.lnrlayoutaddress.setOnClickListener {
+            changeAddress = ChangeAddress(object : AddressActionListener{
+                override fun onAddressActionRequested() {
+                    val bundle = Bundle().apply {
+                        putString("bundlePass","home")
+                    }
+
+                    findNavController().navigate(R.id.action_home_to_addAddress,bundle, NavOptions.Builder().setLaunchSingleTop(true).setPopUpTo(R.id.home,false).build())
+                    changeAddress?.dismiss()
+                }
+
+                override fun onEditRequested(address: Address) {
+                    val action = HomeDirections.actionHomeToUpdateAddress(address,"updateAddress")
+                    findNavController().navigate(action)
+                    changeAddress?.dismiss()
+                }
+
+                override fun onDeleteRequested(address: Address) {
+                    homeViewModel.deleteAddress(address)
+                    changeAddress?.dismiss()
+                }
+
+                override fun onClickLayoutToMakeDefault(address: Address) {
+                    homeViewModel.setAsDefaultAddress(address)
+                    changeAddress?.dismiss()
+                }
+
+            })
+
+            changeAddress?.show(childFragmentManager,"ChangeAddressSheet")
+        }
+    }
+
+
+
+
 
     private fun actionToSearch() {
         binding.apply {
@@ -118,43 +282,11 @@ class Home : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        favouriteViewModel.getAllFavouritesFromFirebase()
         startAutoScroll()
     }
 
-    private fun observeHomeAddress() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            homeViewModel.homeAddress.collectLatest {
-                if (it is NetworkResult.Success || it is  NetworkResult.Error){
-                    binding.txtviewaddress.text = it.data
 
-                    if (!it.message.isNullOrEmpty()){
-                       Toast.makeText(requireContext(), it.message.toString(), Toast.LENGTH_SHORT).show()
-                    }
 
-                }
-            }
-        }
-    }
-
-    private fun observeCartItems() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            homeViewModel.cartItems.collectLatest {
-                if (it is NetworkResult.Success || it is NetworkResult.Error){
-
-                    it.data?.let { cartProducts ->
-                        parentCategoryAdaptor.setCartItems(cartProducts)
-                    }
-                    updateCardBadge(it.data?.size ?: 0)
-                    Log.d("datasizegot",it.data?.size.toString())
-
-                    it.message?.mapNotNull {
-                        Toast.makeText(requireContext(),it.toString(), Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        }
-    }
 
     private fun updateCardBadge(size: Int) {
         cartActionBinding?.let { badgeBinding ->
@@ -167,79 +299,9 @@ class Home : Fragment() {
         }
     }
 
-    private fun showShimmerLayout() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            homeViewModel.products.collectLatest {
-                if (it.data.isNullOrEmpty()){
-                    binding.shimmerlayouthome.startShimmer()
-                    binding.shimmerlayouthome.visibility = View.VISIBLE
-                    binding.addresstoolbar.visibility = View.INVISIBLE
-                    binding.scrollviewhome.visibility = View.INVISIBLE
-                }else{
-                    binding.shimmerlayouthome.stopShimmer()
-                    binding.shimmerlayouthome.visibility = View.INVISIBLE
-                    binding.addresstoolbar.visibility = View.VISIBLE
-                    binding.scrollviewhome.visibility = View.VISIBLE
-                }
-            }
-        }
-    }
 
-    private fun observeGetAllItems() {
-             viewLifecycleOwner.lifecycleScope.launch {
-            favouriteViewModel.favouritesList.collectLatest { favourites->
-                when(favourites){
-                    is NetworkResult.Error<*> -> {
 
-                    }
-                    is NetworkResult.Loading<*> -> {
 
-                    }
-                    is NetworkResult.Success<*> -> {
-                        favourites.data?.let {
-                            parentCategoryAdaptor.setFavouriteItems(it)
-                        }
-                    }
-                    is NetworkResult.UnSpecified<*> -> {
-
-                    }
-                }
-            }
-        }
-    }
-
-    private fun observeAddedToFavouriteState() {
-       viewLifecycleOwner.lifecycleScope.launch {
-           favouriteViewModel.favouritesState.collectLatest { favourites->
-               when(favourites){
-                   is NetworkResult.Error<*> -> {
-                       Toast.makeText(requireContext(), favourites.message, Toast.LENGTH_SHORT).show()
-                   }
-                   is NetworkResult.Loading<*> -> {
-
-                   }
-                   is NetworkResult.Success<*> -> {
-                      favourites.data?.let {
-                          Toast.makeText(requireContext(), "Your Item (${it.product.itemName}) \nAdded to favourites", Toast.LENGTH_SHORT).show()
-                      }
-                   }
-                   is NetworkResult.UnSpecified<*> -> {
-
-                   }
-               }
-           }
-       }
-    }
-
-    private fun observeAddProductInCart() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            cartViewModel.addedCartItems.collectLatest{ result ->
-                if (result is NetworkResult.Error){
-                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
 
     private fun setToolBar() {
         val menu = binding.addresstoolbar.menu
@@ -269,66 +331,13 @@ class Home : Fragment() {
 
 
 
-    private fun observeOffersErrorFromFirebase() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            homeViewModel.offers.collectLatest { offers ->
-                if (offers is NetworkResult.Error){
-                    Toast.makeText(requireContext(),offers.message.toString(), Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
-
-    private fun observeOffersFromFirebase() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            homeViewModel.getOffers.collectLatest { offers ->
-                offersAdaptor.setOffers(offers.toOfferItemList())
-            }
-        }
-    }
-
-
-    private fun observeProductFromFirebase() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            homeViewModel.products.collectLatest{ result ->
-
-                when (result) {
-                    is NetworkResult.Error -> {
-                        Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT).show()
-                    }
-
-                    is NetworkResult.Loading -> {
-
-                    }
-
-                    is NetworkResult.Success -> {
-                        result.data?.let {
-                            parentCategoryAdaptor.setParentCategoryItems(it)
-                        }
-                    }
-
-                    is NetworkResult.UnSpecified -> {
-
-                    }
-                }
-
-            }
-
-        }
-    }
-
-    private fun setCategoryItems() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            homeViewModel.categories.collectLatest {
-                if(it.isNotEmpty()) {
-                    categoryAdaptor.setItem(it.map { it.toCategory() })
-                }
-            }
-        }
-    }
-
 
     private fun setRcOfferAdapter() {
+        offersAdaptor = OffersAdaptor{productId,partnerId->
+            Log.d("OfferViewHolder", "bindOffer: ${productId}, ${partnerId}")
+            homeViewModel.addOfferToCart(productId,partnerId)
+        }
+
         binding.apply {
             rcpageoffers.adapter = offersAdaptor
            rcpageoffers.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL,false)
@@ -345,11 +354,15 @@ class Home : Fragment() {
 
             parentCategoryAdaptor = ParentCategoryAdaptor( object : ChildCategoryListener{
                 override fun addProductToCart(cartProduct: CartProduct) {
-                    cartViewModel.addProductIntoCartFirebase(cartProduct)
+                    homeViewModel.addProductToCart(cartProduct)
                 }
 
                 override fun addProductToFavourites(favouriteItem: FavouriteItem) {
-                    favouriteViewModel.addToFavourites(favouriteItem)
+                    homeViewModel.addProductToFavourites(favouriteItem)
+                }
+
+                override fun addProductToWishList(wishItem: WishItem) {
+                    homeViewModel.addProductToWishlist(wishItem)
                 }
 
 
@@ -362,8 +375,7 @@ class Home : Fragment() {
             })
 
             nestedrcview.adapter = parentCategoryAdaptor
-            nestedrcview.layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            nestedrcview.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }
     }
 
@@ -380,8 +392,7 @@ class Home : Fragment() {
             })
 
             rcviewCategory.adapter = categoryAdaptor
-            rcviewCategory.layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            rcviewCategory.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
 
         }
@@ -395,9 +406,14 @@ class Home : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         stopAutoScroll()
+        if (::loadingDialogue.isInitialized) {
+            loadingDialogue.dismiss()
+        }
+
         home = null
         cartActionBinding = null
     }
 
 
 }
+

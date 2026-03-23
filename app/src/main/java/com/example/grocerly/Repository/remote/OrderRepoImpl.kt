@@ -1,6 +1,16 @@
 package com.example.grocerly.Repository.remote
 
+import android.content.Context
 import android.util.Log
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
+import androidx.work.impl.constraints.ConstraintsState
+import androidx.work.workDataOf
 import com.example.grocerly.model.CancellationInfo
 import com.example.grocerly.model.CartProduct
 import com.example.grocerly.model.Order
@@ -11,19 +21,22 @@ import com.example.grocerly.utils.Constants.PARTNERS
 import com.example.grocerly.utils.Constants.USERS
 import com.example.grocerly.utils.NetworkResult
 import com.example.grocerly.utils.OrderStatus
+import com.example.grocerly.worker.CouponWorker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
 @ActivityRetainedScoped
-  class OrderRepoImpl @Inject constructor(private val db: FirebaseFirestore, private val auth: FirebaseAuth) {
+  class OrderRepoImpl @Inject constructor(private val db: FirebaseFirestore, private val auth: FirebaseAuth,private val rewardRepoImpl: RewardRepoImpl,@ApplicationContext private val context: Context) {
 
     private val userId = auth.currentUser?.uid.toString()
 
@@ -126,6 +139,31 @@ import javax.inject.Inject
 
             batch.commit().await()
 
+            if (status == OrderStatus.DELIVERED) {
+                val workData = workDataOf("orderId" to order.orderId)
+
+                val constraints = Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
+
+                val couponWorkRequest = OneTimeWorkRequestBuilder<CouponWorker>()
+                    .setInputData(workData)
+                    .setConstraints(constraints)
+                    .setBackoffCriteria(
+                        BackoffPolicy.EXPONENTIAL,
+                        WorkRequest.MIN_BACKOFF_MILLIS,
+                        TimeUnit.MILLISECONDS
+                    )
+                    .build()
+
+                WorkManager.getInstance(context).enqueueUniqueWork(
+                    "coupon_gen_${order.orderId}",
+                    ExistingWorkPolicy.REPLACE,
+                    couponWorkRequest
+                )
+
+            }
+
             NetworkResult.Success(Unit)
         }catch (e: Exception){
             NetworkResult.Error(e.message)
@@ -193,7 +231,8 @@ import javax.inject.Inject
             "deliveryDate" to deliveryDate,
             "deliveredDate" to deliveredDate,
             "orderStatus" to  orderStatus,
-            "cancellationInfo" to cancellationInfo.toMap()
+            "cancellationInfo" to cancellationInfo.toMap(),
+            "isRewardClaimed" to isRewardClaimed
         )
     }
 

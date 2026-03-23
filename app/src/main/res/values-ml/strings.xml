@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ഗ്രോസർലി</string>
-    <string name="hello_blank_fragment">ഹലോ ബ്ലാങ്ക് ഫ്രാഗ്മെന്റ്</string>
     <string name="email">ഇമെയിൽ</string>
     <string name="no_favourites">ഇഷ്ടപ്പെട്ടവ ഒന്നുമില്ല</string>
     <string name="cart">കാർട്ട്</string>
@@ -48,7 +47,6 @@
     <string name="work">ജോലി</string>
     <string name="other">മറ്റ്</string>
     <string name="loading">ലോഡിംഗ്...</string>
-    <string name="add_cart">കാർട്ടിൽ ഇടുക</string>
     <string name="are_you_sure_to_change_registered_email">രജിസ്റ്റർ ചെയ്ത ഇമെയിൽ മാറ്റാൻ നിങ്ങൾക്ക് ഉറപ്പുണ്ടോ?</string>
     <string name="change_credentials">ക്രെഡൻഷ്യലുകൾ മാറ്റണോ?</string>
     <string name="new_email">പുതിയ ഇമെയിൽ</string>

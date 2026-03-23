@@ -9,6 +9,7 @@ import com.example.grocerly.utils.Constants.PARTNERS
 import com.example.grocerly.utils.Constants.PRODUCTS
 import com.example.grocerly.utils.Constants.QUANTITY
 import com.example.grocerly.utils.Constants.USERS
+import com.example.grocerly.utils.Mappers.getFutureDateString
 import com.example.grocerly.utils.NetworkResult
 import com.example.grocerly.utils.PackUp
 import com.google.firebase.auth.FirebaseAuth
@@ -31,9 +32,10 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.math.roundToInt
 
-@ActivityRetainedScoped
+@Singleton
 class CartRepoImpl @Inject constructor(private val db: FirebaseFirestore, private val auth: FirebaseAuth) {
 
     val userId = auth.currentUser?.uid.toString()
@@ -44,38 +46,25 @@ class CartRepoImpl @Inject constructor(private val db: FirebaseFirestore, privat
     suspend fun addProductToCart(cartProduct: CartProduct): NetworkResult<Unit> {
         return try {
 
-            val existingDoc = cartRef.document(cartProduct.product.productId).get().await()
-            val existingProduct = existingDoc.toObject(CartProduct::class.java)
+            val productId = cartProduct.product.productId
+            val documentRef = cartRef.document(productId)
 
-            if (existingProduct?.product?.productId == cartProduct.product.productId) {
+            val snapshot = documentRef.get().await()
 
-                val newProduct = existingProduct.copy(
-                    deliveryDate = getFutureDateString(
-                        cartProduct.product.packUpTime,
-                        "dd MMMM, E"
-                    )
-                )
-                if (newProduct.quantity <= (cartProduct.product.maxQuantity ?: 1)) {
-                    cartRef.document(existingProduct.product.productId)
-                        .update(newProduct.toHashMap()).await()
-                    NetworkResult.Success(Unit)
-                } else {
-                    NetworkResult.Error("Maximum Quantity")
-                }
+            if (snapshot.exists()) {
 
-            } else {
-                val updated = cartProduct.copy(
-                    deliveryDate = getFutureDateString(
-                        cartProduct.product.packUpTime,
-                        "dd MMMM, E"
-                    )
-                )
-
-                cartRef.document(cartProduct.product.productId).set(updated).await()
+                documentRef.delete().await()
                 NetworkResult.Success(Unit)
-
+            } else {
+                val updatedProduct = cartProduct.copy(
+                    deliveryDate = getFutureDateString(
+                        cartProduct.product.packUpTime,
+                        "dd MMMM, E"
+                    )
+                )
+                documentRef.set(updatedProduct).await()
+                NetworkResult.Success(Unit)
             }
-
 
         } catch (e: Exception) {
             NetworkResult.Error(e.message ?: "Unknown Error Occurred")
@@ -92,22 +81,20 @@ class CartRepoImpl @Inject constructor(private val db: FirebaseFirestore, privat
 
     suspend fun updateQuantity(cartProduct: CartProduct): NetworkResult<Unit> {
         val maxQuantity = cartProduct.product.maxQuantity ?: 1
-        val documentRef: DocumentReference = cartRef.document(cartProduct.product.productId)
+
+        if (cartProduct.quantity > maxQuantity) {
+            return NetworkResult.Error("Maximum quantity allowed for \n${cartProduct.product.itemName} is $maxQuantity.")
+        }
+
         return try {
-
-            val updatedQuantity = cartProduct.quantity.coerceAtMost(maxQuantity)
-            documentRef.update(QUANTITY, updatedQuantity).await()
-
-            if (cartProduct.quantity > maxQuantity) {
-                NetworkResult.Error("Maximum quantity allowed for \n${cartProduct.product.itemName} is $maxQuantity.")
-            } else {
-                NetworkResult.Success(Unit)
-            }
-
+            cartRef.document(cartProduct.product.productId)
+                .update(QUANTITY, cartProduct.quantity)
+                .await()
+            NetworkResult.Success(Unit)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            NetworkResult.Error(e.message.toString())
+            NetworkResult.Error(e.message ?: "Failed to update quantity")
         }
     }
 
@@ -125,19 +112,17 @@ class CartRepoImpl @Inject constructor(private val db: FirebaseFirestore, privat
 
             if (snapshot == null || snapshot.isEmpty) {
                 trySend(NetworkResult.Success(emptyList()))
+                return@addSnapshotListener
             }
 
-            snapshot?.let {
-                val cartProducts =
-                    snapshot.documents.mapNotNull { it.toObject(CartProduct::class.java) }
+            val cartProducts = snapshot.documents.mapNotNull { it.toObject(CartProduct::class.java) }
 
-                sycJob = launch {
-                    updateCartItemsWithCurrentData(cartProducts)
-                }
-                trySend(NetworkResult.Success(cartProducts))
+            trySend(NetworkResult.Success(cartProducts))
 
+            sycJob?.cancel()
+            sycJob = launch {
+                updateCartItemsWithCurrentData(cartProducts)
             }
-
 
         }
         awaitClose {
@@ -147,79 +132,79 @@ class CartRepoImpl @Inject constructor(private val db: FirebaseFirestore, privat
     }
 
 
-    suspend fun updateCartItemsWithCurrentData(cartItems: List<CartProduct>) = coroutineScope {
-        if (cartItems.isEmpty()) return@coroutineScope
+    suspend fun updateCartItemsWithCurrentData(cartItems: List<CartProduct>) {
+        if (cartItems.isEmpty()) return
 
-        val grouped = cartItems
-            .groupBy { it.product.partnerId }
-            .flatMap { (partnerId, items) ->
-                items.chunked(10).map { chunk ->
-                    async {
-                        try {
-                            val productSnapshot = db.collection(PARTNERS)
-                                .document(partnerId)
-                                .collection(PRODUCTS)
-                                .whereIn("productId", chunk.map { it.product.productId })
-                                .get()
-                                .await()
+        val productMap = coroutineScope {
+            cartItems.groupBy { it.product.partnerId }
+                .flatMap { (partnerId, items) ->
 
-                            productSnapshot.toObjects(Product::class.java)
-                        } catch (e: Exception) {
-                            emptyList<Product>()
+                    items.chunked(10).map { chunk ->
+                        async {
+                            try {
+                                val productIds = chunk.map { it.product.productId }
+                                val snapshot = db.collection(PARTNERS)
+                                    .document(partnerId)
+                                    .collection(PRODUCTS)
+                                    .whereIn("productId", productIds)
+                                    .get()
+                                    .await()
+                                snapshot.toObjects(Product::class.java)
+                            } catch (e: Exception) {
+                                emptyList<Product>()
+                            }
                         }
                     }
                 }
+                .awaitAll()
+                .flatten()
+                .associateBy { it.productId }
+        }
 
-            }.awaitAll().flatten()
+
+        val batch = db.batch()
+        var requiresNetworkWrite = false
 
 
-        val productMap = grouped.associateBy { it.productId }
-        Log.d("productmap", productMap.toString())
-        cartItems.map { cartItem ->
-            async {
-                try {
+        cartItems.forEach { cartItem ->
+            val productId = cartItem.product.productId
+            val updatedProduct = productMap[productId]
+            val docRef = cartRef.document(productId)
 
-                    val updatedProduct = productMap[cartItem.product.productId]
+            if (updatedProduct == null) {
+                batch.delete(docRef)
+                requiresNetworkWrite = true
+            } else {
 
-                    if (updatedProduct == null) {
-                        val itemToDelete =
-                            cartRef.document(cartItem.product.productId).get().await()
+                val newDeliveryDate = getFutureDateString(updatedProduct.packUpTime, "dd MMMM, E")
 
-                        if (itemToDelete.exists()) {
-                            cartRef.document(cartItem.product.productId).delete().await()
-                        }
-
-                    } else {
-                        val updatedCartItem = cartItem.copy(
-                            deliveryDate = getFutureDateString(
-                                updatedProduct.packUpTime,
-                                "dd MMMM, E"
-                            ),
-                            product = updatedProduct.copy(
-                                productId = cartItem.product.productId,
-                                image = updatedProduct.image,
-                                itemName = updatedProduct.itemName,
-                                itemPrice = updatedProduct.itemPrice,
-                                itemOriginalPrice = updatedProduct.itemOriginalPrice
-                            )
-                        )
-
-                        if (updatedCartItem != cartItem) {
-                            cartRef.document(cartItem.product.productId)
-                                .set(updatedCartItem, SetOptions.merge())
-                                .await()
-                        }
-                    }
-                } catch (e: Exception) {
-                    Log.e(
-                        "CartUpdateError",
-                        "Failed to update cart item ${cartItem.product.productId}",
-                        e
+                val updatedCartItem = cartItem.copy(
+                    deliveryDate = newDeliveryDate,
+                    product = updatedProduct.copy(
+                        productId = productId,
+                        image = updatedProduct.image,
+                        itemName = updatedProduct.itemName,
+                        itemPrice = updatedProduct.itemPrice,
+                        itemOriginalPrice = updatedProduct.itemOriginalPrice
                     )
+                )
+
+                if (updatedCartItem != cartItem) {
+
+                    batch.set(docRef, updatedCartItem, SetOptions.merge())
+                    requiresNetworkWrite = true
                 }
             }
-        }.awaitAll()
+        }
 
+
+        if (requiresNetworkWrite) {
+            try {
+                batch.commit().await()
+            } catch (e: Exception) {
+                Log.e("CartUpdateError", "Failed to commit cart batch updates", e)
+            }
+        }
     }
 
 
@@ -245,12 +230,15 @@ class CartRepoImpl @Inject constructor(private val db: FirebaseFirestore, privat
                 return@addSnapshotListener
             }
 
-            snapshot?.let {
-                val amount =
-                    it.documents.mapNotNull { doc -> doc.toObject(CartProduct::class.java) }
+            if (snapshot==null || snapshot.isEmpty){
+                trySend(NetworkResult.Success(0f))
+                return@addSnapshotListener
+            }
+
+            snapshot.let {
+                val amount = it.documents.mapNotNull { doc -> doc.toObject(CartProduct::class.java) }
                         .sumOf { cartProduct ->
-                            (cartProduct.product.itemOriginalPrice ?: 0) * (cartProduct.quantity
-                                ?: 1)
+                            (cartProduct.product.itemOriginalPrice ?: 0) * (cartProduct.quantity ?: 1)
                         }
                         .toFloat()
 
@@ -281,22 +269,32 @@ class CartRepoImpl @Inject constructor(private val db: FirebaseFirestore, privat
                 return@addSnapshotListener
             }
 
-            snapshot?.let {
-                val amount =
-                    it.documents.mapNotNull { doc -> doc.toObject(CartProduct::class.java) }
+
+            if (snapshot == null || snapshot.isEmpty) {
+                val emptyMap: Map<String, Int> = linkedMapOf(
+                    "Price (0 Items)" to 0,
+                    "Product Discount" to 0,
+                    "Platform Fee" to 0,
+                    "Delivery Charge" to 0,
+                    "Applied Coupons" to 0,
+                    "Total Amount" to 0
+                )
+                trySend(NetworkResult.Success(emptyMap))
+                return@addSnapshotListener
+            }
+
+            snapshot.let {
+                val amount = it.documents.mapNotNull { doc -> doc.toObject(CartProduct::class.java) }
                         .sumOf { cartProduct ->
-                            (cartProduct.product.itemOriginalPrice ?: 0) * (cartProduct.quantity
-                                ?: 1)
+                            (cartProduct.product.itemPrice ?: 0) * (cartProduct.quantity ?: 1)
                         }
 
-                val discountAmount =
-                    cartItems.sumOf { (it.product.itemPrice ?: 0) * (it.quantity ?: 1) } - amount
-                Log.d("productdiscount", discountAmount.toString())
+                val discountAmount =  amount - cartItems.sumOf { (it.product.itemOriginalPrice ?: 0) * (it.quantity ?: 1) }
 
                 val platformFee = (amount * 0.01f).roundToInt()
                 val deliveryFee = calculateDeliveryCharge(amount)
                 val coupon = couponAmount
-                val finalAmount = (amount + platformFee + deliveryFee.totalCharge) - coupon
+                val finalAmount = (amount + platformFee + deliveryFee.totalCharge) - (coupon + discountAmount)
 
 
                 val priceMap: Map<String, Int> = linkedMapOf(
@@ -321,32 +319,7 @@ class CartRepoImpl @Inject constructor(private val db: FirebaseFirestore, privat
 
     }
 
-    fun getFutureDateString(packUp: PackUp, format: String = "dd MMMM, E"): String {
 
-        val zoneId = ZoneId.of("Asia/Kolkata")
-        val now = ZonedDateTime.now(zoneId)
-        val noonToday = now.withHour(12).withMinute(0).withSecond(0).withNano(0)
-
-
-        val daysToAdd = when (packUp) {
-            PackUp.selectTime -> 0
-            PackUp.oneday -> 1
-            PackUp.twoday -> 2
-            PackUp.threeday -> 3
-        }
-
-        val adjustedDaysToAdd = if (now.isAfter(noonToday)) {
-            daysToAdd + 1
-        } else {
-            daysToAdd
-        }
-
-        val futureDate = now.plusDays(adjustedDaysToAdd.toLong())
-
-        val formatter = DateTimeFormatter.ofPattern(format, Locale.getDefault())
-        return futureDate.format(formatter)
-
-    }
 
 
     fun calculateDeliveryCharge(price: Int): DeliveryCharge {

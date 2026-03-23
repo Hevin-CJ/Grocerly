@@ -19,6 +19,10 @@ plugins {
 val properties = Properties()
 properties.load(FileInputStream(rootProject.file("local.properties")))
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 android {
     namespace = "com.example.grocerly"
     compileSdk = 35
@@ -30,8 +34,13 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+
+
         resValue("string", "google_server_client_id", properties.getProperty("GOOGLE_SERVER_CLIENT_ID"))
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+
+
     }
 
     buildTypes {
@@ -68,6 +77,13 @@ android {
 dependencies {
 
 
+    //retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.moshi)
+
+
+
+
 
     //navigation
     implementation(libs.androidx.navigation.fragment)
@@ -82,6 +98,10 @@ dependencies {
     implementation(libs.google.firebase.analytics)
     implementation(libs.firebase.appcheck.playintegrity)
     implementation(libs.com.google.firebase.firebase.analytics)
+    implementation(libs.firebase.messaging)
+
+    //coil
+    implementation(libs.coil.kt.coil)
 
     //livedata
 
@@ -110,6 +130,10 @@ dependencies {
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
+
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
 
     //glide
     implementation(libs.glide)

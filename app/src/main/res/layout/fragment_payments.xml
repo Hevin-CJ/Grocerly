@@ -39,7 +39,6 @@
             android:layout_margin="8dp">
 
             <TextView
-                android:id="@+id/txtviewtotaltxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -65,6 +64,18 @@
 
     </com.google.android.material.card.MaterialCardView>
 
+    <Button
+        android:id="@+id/confirmpaymentbtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/green"
+        android:text="Confirm Payment"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline13"
+        app:layout_constraintStart_toStartOf="@+id/guideline12" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline12"
         android:layout_width="wrap_content"
@@ -83,10 +94,12 @@
         android:id="@+id/rcviewpayments"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/confirmpaymentbtn"
         app:layout_constraintEnd_toStartOf="@+id/guideline13"
         app:layout_constraintStart_toStartOf="@+id/guideline12"
         app:layout_constraintTop_toBottomOf="@+id/materialCardView6" />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

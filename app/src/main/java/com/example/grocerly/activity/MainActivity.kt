@@ -1,6 +1,7 @@
 package com.example.grocerly.activity
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -13,19 +14,23 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.grocerly.R
 import com.example.grocerly.databinding.ActivityMainBinding
 import com.example.grocerly.fragments.Payments
+import com.example.grocerly.model.Order
 import com.example.grocerly.preferences.GrocerlyDataStore
 import com.example.grocerly.utils.Constants.ORDERS
 import com.example.grocerly.utils.Constants.USERS
 import com.example.grocerly.utils.LocaleUtil
+import com.example.grocerly.utils.PermissionManager
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 import com.razorpay.PaymentResultListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -34,6 +39,8 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
+
+
 
     @Inject
     lateinit var auth: FirebaseAuth
@@ -77,7 +84,10 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
 
         setNavigationGraph()
         setBottomNavigationListener()
+        subscribeToProductUpdates()
     }
+
+
 
     private fun setBottomNavigationListener() {
         binding.tabLayoutmain.setOnItemSelectedListener { item ->
@@ -104,23 +114,56 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
     }
 
 
-     fun setNavigationGraph() {
+    fun setNavigationGraph() {
+        lifecycleScope.launch {
+            val currentUser = auth.currentUser?.uid.toString().isEmpty()
+            val isLoggedIn = grocerlyDataStore.getLoginState().first()
 
-      lifecycleScope.launch {
+            val graphId = if (!currentUser && isLoggedIn) {
+                R.navigation.home_nav
+            } else {
+                R.navigation.grocerly_auth_nav
+            }
 
-          val currentUser = auth.currentUser?.uid.toString().isEmpty()
-          val isLoggedIn = grocerlyDataStore.getLoginState().first()
+            val orderId = intent.getStringExtra("orderId")
+            val productId = intent.getStringExtra("productId")
 
+            val bundle = if (orderId != null && productId != null) {
+                Bundle().apply {
+                    putString("notification_orderId", orderId)
+                    putString("notification_productId", productId)
+                }
+            } else null
 
-          val graphId = if (!currentUser && isLoggedIn) {
-              R.navigation.home_nav
-          } else {
-              R.navigation.grocerly_auth_nav
-          }
-
-          navController.setGraph(graphId)
-      }
+            navController.setGraph(graphId, bundle)
+        }
     }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+
+
+        val orderId = intent.getStringExtra("orderId")
+        val productId = intent.getStringExtra("productId")
+
+        if (orderId != null && productId != null) {
+            val bundle = Bundle().apply {
+                putString("notification_orderId", orderId)
+                putString("notification_productId", productId)
+            }
+
+            navController.navigate(
+                R.id.home,
+                bundle,
+                NavOptions.Builder()
+                    .setPopUpTo(navController.graph.startDestinationId, false)
+                    .setLaunchSingleTop(true)
+                    .build()
+            )
+        }
+    }
+
 
 
     override fun onSupportNavigateUp(): Boolean {
@@ -143,6 +186,18 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         }
     }
 
+    private fun subscribeToProductUpdates() {
+        val topic = "product_updates"
+        FirebaseMessaging.getInstance().subscribeToTopic(topic)
+            .addOnCompleteListener { task ->
+                var msg = "Subscribed to product updates!"
+
+                if (!task.isSuccessful) {
+                    msg = "Failed to subscribe to product updates."
+                }
+                Log.d("messagefromfcm",msg)
+            }
+    }
 
 }
 

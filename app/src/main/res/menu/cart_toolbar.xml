@@ -4,7 +4,6 @@
 
     <item
         android:title="Orders"
-        android:id="@+id/previousorders"
         android:icon="@drawable/order"
         app:showAsAction="ifRoom|withText"
         />

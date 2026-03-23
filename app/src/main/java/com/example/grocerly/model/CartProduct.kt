@@ -13,5 +13,6 @@ data class CartProduct(
     val deliveryDate: String = "",
     var deliveredDate: Long = 0L,
     val orderStatus: OrderStatus = OrderStatus.PENDING,
-    val cancellationInfo: CancellationInfo = CancellationInfo()
+    val cancellationInfo: CancellationInfo = CancellationInfo(),
+    val isRewardClaimed: Boolean = false
 ): Parcelable

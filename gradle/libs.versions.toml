@@ -1,13 +1,15 @@
 [versions]
-agp = "8.12.3"
+agp = "8.13.2"
 androidGifDrawable = "1.2.29"
 androidMapsUtils = "3.19.0"
 ccpVersion = "2.7.0"
 checkout = "1.6.41"
+coil = "2.7.0"
 coilCompose = "3.3.0"
+converterMoshi = "3.0.0"
 coreSplashscreen = "1.0.1"
 credentialsPlayServicesAuth = "1.5.0"
-daggerCompiler = "2.57.1"
+daggerCompiler = "2.51.1"
 datastorePreferences = "1.1.7"
 facebookLogin = "18.1.3"
 firebaseBom = "34.0.0"
@@ -17,6 +19,7 @@ googleid = "1.1.1"
 gson = "2.13.1"
 hiltAndroid = "2.57.1"
 hiltAndroidCompiler = "2.57"
+hiltWork = "1.3.0"
 kotlin = "2.2.0"
 coreKtx = "1.16.0"
 junit = "4.13.2"
@@ -36,6 +39,7 @@ firebaseAuth = "24.0.1"
 firebaseFirestoreKtx = "25.1.4"
 playServicesLocation = "21.3.0"
 playServicesMaps = "19.2.0"
+retrofit = "3.0.0"
 roomCompiler = "2.8.0"
 roomKtx = "2.8.0"
 roomRuntime = "2.8.0"
@@ -46,6 +50,7 @@ recyclerview = "1.4.0"
 stagestepbar = "1.2.0"
 viewpager2 = "1.1.0"
 firebaseFunctions = "22.0.0"
+workRuntimeKtx = "2.11.1"
 
 [libraries]
 android-gif-drawable = { module = "pl.droidsonroids.gif:android-gif-drawable", version.ref = "androidGifDrawable" }
@@ -56,6 +61,8 @@ androidx-credentials = { module = "androidx.credentials:credentials", version.re
 androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentialsPlayServicesAuth" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferences" }
+androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltWork" }
+androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }
 androidx-lifecycle-compiler = { module = "androidx.lifecycle:lifecycle-compiler", version.ref = "lifecycleViewmodelKtx" }
 androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelKtx" }
@@ -68,12 +75,15 @@ androidx-navigation-ui = { module = "androidx.navigation:navigation-ui", version
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 ccp = { module = "com.hbb20:ccp", version.ref = "ccpVersion" }
 checkout = { module = "com.razorpay:checkout", version.ref = "checkout" }
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coilCompose" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
+coil-kt-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilCompose" }
 com-google-firebase-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "converterMoshi" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "daggerCompiler" }
 facebook-login = { module = "com.facebook.android:facebook-login", version.ref = "facebookLogin" }
 firebase-ai = { module = "com.google.firebase:firebase-ai" }
@@ -83,6 +93,7 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-bom-v3380 = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
 firebase-dynamic-links = { module = "com.google.firebase:firebase-dynamic-links" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 google-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 google-firebase-dynamic-links = { module = "com.google.firebase:firebase-dynamic-links", version = "22.1.0" }
@@ -105,6 +116,7 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompatVersion" }

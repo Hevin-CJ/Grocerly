@@ -3,6 +3,84 @@
   <component name="navEditor-manualLayoutAlgorithm2">
     <option name="myPositions">
       <map>
+        <entry key="grocerly_auth_nav.xml">
+          <value>
+            <LayoutPositions>
+              <option name="myPositions">
+                <map>
+                  <entry key="login">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="500" />
+                            <option name="y" value="20" />
+                          </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_login_to_signUp">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="signUp">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="256" />
+                            <option name="y" value="63" />
+                          </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_signUp_to_login">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="splash">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="12" />
+                            <option name="y" value="20" />
+                          </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_splash_to_login">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_splash_to_signUp">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </LayoutPositions>
+          </value>
+        </entry>
         <entry key="home_nav.xml">
           <value>
             <LayoutPositions>
@@ -25,6 +103,11 @@
                               </value>
                             </entry>
                             <entry key="action_addAddress_to_checkout">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_addAddress_to_home">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -132,6 +215,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="coupons">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="1810" />
+                            <option name="y" value="800" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="customSearchView">
                     <value>
                       <LayoutPositions>
@@ -218,6 +313,11 @@
                         </option>
                         <option name="myPositions">
                           <map>
+                            <entry key="action_helpCenter_to_menu">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
                             <entry key="action_helpCenter_to_profile">
                               <value>
                                 <LayoutPositions />
@@ -233,18 +333,28 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="1720" />
-                            <option name="y" value="1777" />
+                            <option name="x" value="1693" />
+                            <option name="y" value="2111" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
+                            <entry key="action_home_to_addAddress">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
                             <entry key="action_home_to_cart">
                               <value>
                                 <LayoutPositions />
                               </value>
                             </entry>
                             <entry key="action_home_to_customSearchView">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_home_to_updateAddress">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -262,6 +372,20 @@
                             <option name="x" value="12" />
                             <option name="y" value="12" />
                           </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_menu_to_helpCenter">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_menu_to_orders">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
                         </option>
                       </LayoutPositions>
                     </value>
@@ -319,6 +443,11 @@
                         </option>
                         <option name="myPositions">
                           <map>
+                            <entry key="action_orders_to_menu">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
                             <entry key="action_orders_to_orderDetails">
                               <value>
                                 <LayoutPositions />
@@ -397,6 +526,11 @@
                               </value>
                             </entry>
                             <entry key="action_profile_to_savedCards">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_profile_to_wishList">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -480,13 +614,18 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="988" />
-                            <option name="y" value="2064" />
+                            <option name="x" value="1136" />
+                            <option name="y" value="2158" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
                             <entry key="action_updateAddress_to_checkout">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_updateAddress_to_home">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -513,6 +652,27 @@
                         <option name="myPositions">
                           <map>
                             <entry key="action_upsertCard_to_savedCards">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="wishList">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="1694" />
+                            <option name="y" value="-31" />
+                          </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_wishList_to_profile">
                               <value>
                                 <LayoutPositions />
                               </value>

@@ -19,22 +19,13 @@ import javax.inject.Inject
 class FavouriteViewModel @Inject constructor(private val favouritesRepoImpl: FavouritesRepoImpl,application: Application): AndroidViewModel(application) {
 
 
-    private val _favouritesState = MutableSharedFlow<NetworkResult<FavouriteItem>>()
-    val favouritesState: SharedFlow<NetworkResult<FavouriteItem>> get() = _favouritesState.asSharedFlow()
-
     private val _favouritesList = MutableSharedFlow<NetworkResult<List<FavouriteItem>>>()
     val favouritesList: SharedFlow<NetworkResult<List<FavouriteItem>>> get() = _favouritesList.asSharedFlow()
 
     private val _deletedFavourite = MutableSharedFlow<NetworkResult<String>>()
     val deletedFavourite: SharedFlow<NetworkResult<String>> get() = _deletedFavourite.asSharedFlow()
 
-    fun addToFavourites(favouriteItem: FavouriteItem){
-        viewModelScope.launch {
-            _favouritesState.emit(NetworkResult.Loading())
-            val result = favouritesRepoImpl.addToFavouritesFirebase(favouriteItem)
-            _favouritesState.emit(result)
-        }
-    }
+
 
     fun getAllFavouritesFromFirebase(){
         viewModelScope.launch {

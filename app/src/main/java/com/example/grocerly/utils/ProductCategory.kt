@@ -12,7 +12,8 @@ enum class ProductCategory(val displayName:String) : Parcelable {
     PersonalCare("Personal Care"),
     Households("House Holds"),
    HealthCare("Health Care"),
-    Meat("Meat");
+    Meat("Meat"),
+    Account("Account");
 
    companion object{
        fun fromString(name: String?): ProductCategory {

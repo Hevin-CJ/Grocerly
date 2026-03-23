@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.grocerly.Repository.local.ProfileLocalRepoImpl
+import com.example.grocerly.Repository.remote.LogoutRepoImpl
 import com.example.grocerly.Repository.remote.ProfileRepoImpl
 import com.example.grocerly.model.Account
 import com.example.grocerly.preferences.GrocerlyDataStore
@@ -38,7 +39,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(application: Application,private val profileRepoImpl: ProfileRepoImpl,private val profileLocalRepoImpl: ProfileLocalRepoImpl) :AndroidViewModel(application) {
+class ProfileViewModel @Inject constructor(application: Application,private val profileRepoImpl: ProfileRepoImpl,private val profileLocalRepoImpl: ProfileLocalRepoImpl,private val logoutRepoImpl: LogoutRepoImpl) :AndroidViewModel(application) {
 
     val getProfileData = profileLocalRepoImpl.getProfile().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), ProfileEntity("","","","","","",""))
 
@@ -161,9 +162,7 @@ class ProfileViewModel @Inject constructor(application: Application,private val 
 
     }
 
-
-
-
+    
     fun LogOutUserFromFirebase(){
        viewModelScope.launch {
            enableLogout()
@@ -173,12 +172,8 @@ class ProfileViewModel @Inject constructor(application: Application,private val 
     private suspend fun enableLogout() {
         if (NetworkUtils.isNetworkAvailable(getApplication())){
             _logoutState.emit(NetworkResult.Loading())
-            val isSignedOut = profileRepoImpl.enableLogout()
-            val loginState = grocerlyDataStore.getLoginState().first()
-            if (isSignedOut && !loginState){
-                _logoutState.emit(NetworkResult.Success("Logged Out"))
-            }
-
+            val isSignedOut = logoutRepoImpl.enableLogout()
+            _logoutState.emit(isSignedOut)
         }else{
             _logoutState.emit(NetworkResult.Error("Enable Wifi or Mobile Data"))
         }

@@ -46,29 +46,8 @@ class Favourites : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         observeFavouriteListState()
         setRcViewFavourites()
-        collectAddToCartState()
     }
 
-    private fun collectAddToCartState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            cartViewModel.addedCartItems.collectLatest { state->
-                when(state){
-                    is NetworkResult.Error<*> -> {
-                        Toast.makeText(requireContext(),state.message, Toast.LENGTH_SHORT).show()
-                    }
-                    is NetworkResult.Loading<*> -> {
-
-                    }
-                    is NetworkResult.Success<*> -> {
-                        Toast.makeText(requireContext(),"Added To Cart", Toast.LENGTH_SHORT).show()
-                    }
-                    is NetworkResult.UnSpecified<*> -> {
-
-                    }
-                }
-            }
-        }
-    }
 
     private fun setRcViewFavourites() {
         binding.apply {

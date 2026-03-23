@@ -2,7 +2,6 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/home_nav"
     app:startDestination="@id/home">
 
     <fragment
@@ -16,6 +15,12 @@
         <action
             android:id="@+id/action_home_to_customSearchView"
             app:destination="@id/customSearchView" />
+        <action
+            android:id="@+id/action_home_to_addAddress"
+            app:destination="@id/addAddress" />
+        <action
+            android:id="@+id/action_home_to_updateAddress"
+            app:destination="@id/updateAddress" />
     </fragment>
     <fragment
         android:id="@+id/cart"
@@ -55,12 +60,25 @@
         <action
             android:id="@+id/action_profile_to_helpCenter"
             app:destination="@id/helpCenter" />
+        <action
+            android:id="@+id/action_profile_to_wishList"
+            app:destination="@id/wishList" />
+        <action
+            android:id="@+id/action_profile_to_coupons"
+            app:destination="@id/coupons" />
     </fragment>
     <fragment
         android:id="@+id/menu"
         android:name="com.example.grocerly.fragments.Menu"
         android:label="fragment_menu"
-        tools:layout="@layout/fragment_menu" />
+        tools:layout="@layout/fragment_menu" >
+        <action
+            android:id="@+id/action_menu_to_orders"
+            app:destination="@id/orders" />
+        <action
+            android:id="@+id/action_menu_to_helpCenter"
+            app:destination="@id/helpCenter" />
+    </fragment>
     <fragment
         android:id="@+id/search"
         android:name="com.example.grocerly.fragments.Search"
@@ -113,6 +131,9 @@
         <action
             android:id="@+id/action_addAddress_to_checkout"
             app:destination="@id/checkout" />
+        <action
+            android:id="@+id/action_addAddress_to_home"
+            app:destination="@id/home" />
     </fragment>
     <fragment
         android:id="@+id/updateAddress"
@@ -131,6 +152,9 @@
         <argument
             android:name="bundlePass"
             app:argType="string" />
+        <action
+            android:id="@+id/action_updateAddress_to_home"
+            app:destination="@id/home" />
     </fragment>
     <fragment
         android:id="@+id/editLanguage"
@@ -171,6 +195,9 @@
             android:name="savedCard"
             app:argType="com.example.grocerly.model.Card"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_upsertCard_to_payments"
+            app:destination="@id/payments" />
     </fragment>
     <fragment
         android:id="@+id/checkout"
@@ -219,6 +246,9 @@
         <action
             android:id="@+id/action_payments_to_orderPlaced"
             app:destination="@id/orderPlaced" />
+        <action
+            android:id="@+id/action_payments_to_upsertCard"
+            app:destination="@id/upsertCard" />
 
     </fragment>
     <fragment
@@ -241,6 +271,9 @@
         <action
             android:id="@+id/action_orders_to_orderDetails"
             app:destination="@id/orderDetails" />
+        <action
+            android:id="@+id/action_orders_to_menu"
+            app:destination="@id/menu" />
     </fragment>
     <fragment
         android:id="@+id/orderDetails"
@@ -276,6 +309,27 @@
         tools:layout="@layout/fragment_help_center" >
         <action
             android:id="@+id/action_helpCenter_to_profile"
+            app:destination="@id/profile" />
+        <action
+            android:id="@+id/action_helpCenter_to_menu"
+            app:destination="@id/menu" />
+    </fragment>
+    <fragment
+        android:id="@+id/wishList"
+        android:name="com.example.grocerly.fragments.WishList"
+        android:label="fragment_wish_list"
+        tools:layout="@layout/fragment_wish_list" >
+        <action
+            android:id="@+id/action_wishList_to_profile"
+            app:destination="@id/profile" />
+    </fragment>
+    <fragment
+        android:id="@+id/coupons"
+        android:name="com.example.grocerly.fragments.Coupons"
+        android:label="fragment_coupons"
+        tools:layout="@layout/fragment_coupons" >
+        <action
+            android:id="@+id/action_coupons_to_profile"
             app:destination="@id/profile" />
     </fragment>
 </navigation>

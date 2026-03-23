@@ -125,6 +125,10 @@ class AddAddress : Fragment() {
                             "saved_address" ->{
                                 findNavController().navigate(R.id.action_addAddress_to_savedAddress,null, NavOptions.Builder().setLaunchSingleTop(true).setPopUpTo(R.id.savedAddress,false).build())
                             }
+
+                            "home" ->{
+                                findNavController().popBackStack(R.id.home,true)
+                            }
                         }
 
                     }
@@ -265,6 +269,10 @@ class AddAddress : Fragment() {
 
                     "saved_address" ->{
                         findNavController().navigate(R.id.action_addAddress_to_savedAddress,null, NavOptions.Builder().setLaunchSingleTop(true).setPopUpTo(R.id.savedAddress,false).build())
+                    }
+
+                    "home" ->{
+                        findNavController().popBackStack(R.id.home,false)
                     }
                 }
 

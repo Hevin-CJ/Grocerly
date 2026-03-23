@@ -76,10 +76,11 @@ class PaymentAdaptor(private val listener: PaymentListener): RecyclerView.Adapte
             is PaymentMethodItem.Content ->{
                 when(currentItem.type){
                     PaymentMethodItem.Type.CARD -> {
-                        currentItem.card?.let { card ->
-                            (holder as CardViewHolder).bindCard(card)
+                        if (currentItem.card != null) {
+                            (holder as CardViewHolder).bindCard(currentItem.card)
+                        } else {
+                            (holder as CardViewHolder).bindEmptyState()
                         }
-
                     }
                     PaymentMethodItem.Type.UPI -> (holder as UpiViewHolder).bindUpi()
                     PaymentMethodItem.Type.COD -> (holder as CashOnDeliveryViewHolder).bindCod()
@@ -92,15 +93,20 @@ class PaymentAdaptor(private val listener: PaymentListener): RecyclerView.Adapte
        return paymentItems.size
     }
 
-    private fun toggleContent(position: Int,header: PaymentMethodItem.Header){
+    private fun toggleContent(position: Int, header: PaymentMethodItem.Header) {
         if (expandedIndex != null) {
             val removeIndex = expandedIndex!! + 1
+            var itemsRemoved = 0
 
-            if (removeIndex < paymentItems.size && paymentItems[removeIndex] is PaymentMethodItem.Content) {
+
+            while (removeIndex < paymentItems.size && paymentItems[removeIndex] is PaymentMethodItem.Content) {
                 paymentItems.removeAt(removeIndex)
-                notifyItemRemoved(removeIndex)
+                itemsRemoved++
             }
 
+            if (itemsRemoved > 0) {
+                notifyItemRangeRemoved(removeIndex, itemsRemoved)
+            }
 
             if (expandedIndex == position) {
                 expandedIndex = null
@@ -110,11 +116,18 @@ class PaymentAdaptor(private val listener: PaymentListener): RecyclerView.Adapte
 
 
         val newContent = when (header.id) {
-            1 -> cardItems.map { card -> PaymentMethodItem.Content(PaymentMethodItem.Type.CARD, card) }
+            1 -> {
+                if (cardItems.isEmpty()) {
+                    listOf(PaymentMethodItem.Content(PaymentMethodItem.Type.CARD, null))
+                } else {
+                    cardItems.map { card -> PaymentMethodItem.Content(PaymentMethodItem.Type.CARD, card) }
+                }
+            }
             2 -> listOf(PaymentMethodItem.Content(PaymentMethodItem.Type.UPI))
             3 -> listOf(PaymentMethodItem.Content(PaymentMethodItem.Type.COD))
             else -> emptyList()
         }
+
 
         paymentItems.addAll(position + 1, newContent)
         notifyItemRangeInserted(position + 1, newContent.size)

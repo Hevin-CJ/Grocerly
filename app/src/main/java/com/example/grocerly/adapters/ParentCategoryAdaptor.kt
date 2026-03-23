@@ -15,12 +15,15 @@ import com.example.grocerly.model.CartProduct
 import com.example.grocerly.model.FavouriteItem
 import com.example.grocerly.model.ParentCategoryItem
 import com.example.grocerly.model.Product
+import com.example.grocerly.model.WishItem
 import com.example.grocerly.utils.ProductCategory
 
 class ParentCategoryAdaptor(private val listener: ChildCategoryListener,private val searchViewListener: SearchViewListener): RecyclerView.Adapter<ParentCategoryAdaptor.ParentCategoryViewHolder>() {
 
     private var favoritesList: List<FavouriteItem> = emptyList()
     private var cartList: List<CartProduct> = emptyList()
+
+    private var wishItems: List<WishItem> = emptyList()
 
 
     private val diffUtil = object : DiffUtil.ItemCallback<ParentCategoryItem>(){
@@ -62,6 +65,7 @@ class ParentCategoryAdaptor(private val listener: ChildCategoryListener,private 
                  childAdapter.setProducts(parentCategoryItem.childCategoryItems)
                  childAdapter.setFavouriteItems(favoritesList)
                  childAdapter.setCartItems(cartList)
+                 childAdapter.setWishItems(wishItems)
 
                  seeallbtn.setOnClickListener {
                      searchViewListener.onItemClicked(ProductCategory.fromString(parentCategoryItem.categoryName))
@@ -98,6 +102,11 @@ class ParentCategoryAdaptor(private val listener: ChildCategoryListener,private 
 
     fun setCartItems(cartItems: List<CartProduct>){
         this.cartList = cartItems
+        notifyDataSetChanged()
+    }
+
+    fun setWishlistItems(wishlistItems: List<WishItem>){
+        this.wishItems = wishlistItems
         notifyDataSetChanged()
     }
 

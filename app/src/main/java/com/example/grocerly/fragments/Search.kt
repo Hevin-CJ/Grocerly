@@ -19,6 +19,7 @@ import com.example.grocerly.databinding.FragmentSearchBinding
 import com.example.grocerly.interfaces.ChildCategoryListener
 import com.example.grocerly.model.CartProduct
 import com.example.grocerly.model.FavouriteItem
+import com.example.grocerly.model.WishItem
 import com.example.grocerly.utils.GridSpacingItemDecoration
 import com.example.grocerly.utils.NetworkResult
 import com.example.grocerly.viewmodel.CartViewModel
@@ -54,7 +55,6 @@ class Search : Fragment() {
         enableSearchView()
         collectSearchFromFirebase()
         setSearchAdaptor()
-        observeAddToCartItems()
         setCancelSearch()
         setupPredefinedSearchButtons()
         setCartItems()
@@ -124,15 +124,7 @@ class Search : Fragment() {
         }
     }
 
-    private fun observeAddToCartItems() {
-       viewLifecycleOwner.lifecycleScope.launch {
-           cartViewModel.addedCartItems.collectLatest{ result ->
-               if (result is NetworkResult.Error){
-                   Toast.makeText(requireContext(),result.message.toString(), Toast.LENGTH_SHORT).show()
-               }
-           }
-       }
-    }
+
 
     private fun setSearchAdaptor() {
         binding.apply {
@@ -148,6 +140,10 @@ class Search : Fragment() {
 
                 override fun addProductToFavourites(favouriteItem: FavouriteItem) {
                    searchViewModel.addFavouriteToFirebase(favouriteItem)
+                }
+
+                override fun addProductToWishList(wishItem: WishItem) {
+                    TODO("Not yet implemented")
                 }
 
             })

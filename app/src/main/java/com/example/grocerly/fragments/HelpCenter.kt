@@ -37,7 +37,7 @@ class HelpCenter : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
        helpCenter = FragmentHelpCenterBinding.inflate(inflater,container,false)
         (requireActivity() as MainActivity).setTabLayoutVisibility(false)
         return binding.root

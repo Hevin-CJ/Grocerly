@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.example.grocerly.databinding.RecycOffersBinding
 import com.example.grocerly.model.OfferItem
 
-class OffersAdaptor():RecyclerView.Adapter<OffersAdaptor.OfferViewHolder>() {
+class OffersAdaptor(private val onItemAddToCartClicked: (String, String) -> Unit):RecyclerView.Adapter<OffersAdaptor.OfferViewHolder>() {
 
     private var offerItems: List<OfferItem> = emptyList()
 
@@ -30,6 +30,12 @@ class OffersAdaptor():RecyclerView.Adapter<OffersAdaptor.OfferViewHolder>() {
                 Glide.with(binding.root.context)
                     .load(offerItem.offerImage)
                     .into(binding.imgviewItem)
+
+
+                shopnowbtn.setOnClickListener {
+                    onItemAddToCartClicked(offerItem.productId,offerItem.partnerId)
+                    Log.d("OfferViewHolder", "bindOffer: ${offerItem.productId}, ${offerItem.partnerId}")
+                }
             }
         }
     }

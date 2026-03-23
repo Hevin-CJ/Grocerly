@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
+    android:layout_gravity="top"
     tools:context=".fragments.ChangeAddress">
 
 
@@ -13,8 +14,7 @@
         android:id="@+id/txtviewchangeaddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
         android:text="Select delivery Address"
         android:textColor="@color/black"
         android:textFontWeight="700"
@@ -58,5 +58,20 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtviewsavedaddress" />
+
+    <TextView
+        android:id="@+id/txtviewerrortype"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="No Address Found"
+        android:visibility="invisible"
+        android:textColor="@color/grey"
+        android:textSize="18sp"
+        android:textFontWeight="600"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/recyclerView2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

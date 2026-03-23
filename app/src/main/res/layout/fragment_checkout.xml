@@ -32,7 +32,6 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constrainlyoutinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
@@ -41,13 +40,13 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView3"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/white"
                 app:cardCornerRadius="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline28"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline27"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -61,7 +60,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
                         android:backgroundTint="@color/white"
                         android:text="Change"
                         android:textAllCaps="true"
@@ -114,7 +112,6 @@
                         android:id="@+id/txtviewDelivertxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
                         android:fontFamily="@font/custom_font"
                         android:text="Deliver to:"
                         android:textColor="@color/black"
@@ -144,198 +141,262 @@
 
             </androidx.cardview.widget.CardView>
 
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rcviewcartcheckout"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:nestedScrollingEnabled="false"
-                app:layout_constraintBottom_toTopOf="@id/cardviewpricedetails"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline28"
+                app:layout_constraintStart_toStartOf="@+id/guideline27"
                 app:layout_constraintTop_toBottomOf="@+id/cardView3" />
 
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardviewpricedetails"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:backgroundTint="@color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/couponview"
+                android:layout_width="0dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/white"
+                app:layout_constraintEnd_toStartOf="@+id/guideline28"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/guideline27"
                 app:layout_constraintTop_toBottomOf="@+id/rcviewcartcheckout">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/txtinputlyttxtcoupon"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="Apply Coupon"
+                    android:textColorHint="@color/hint_grey"
+                    app:cursorColor="@color/green"
+                    app:helperTextEnabled="true"
+                    app:helperTextTextColor="@color/red"
+                    app:layout_constraintBottom_toTopOf="@+id/validatebtn"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView6">
 
-                    <TextView
-                        android:id="@+id/textView12"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/price_details"
-                        android:textColor="@color/black"
-                        android:textFontWeight="600"
-                        android:textSize="16sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/txtviewnormalprice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:textColor="@color/black"
-                        app:layout_constraintBottom_toTopOf="@+id/txtviewdiscountedprice"
-                        app:layout_constraintStart_toStartOf="@+id/textView12"
-                        app:layout_constraintTop_toBottomOf="@+id/textView12"
-                        tools:text="Price (2 items)" />
-
-                    <TextView
-                        android:id="@+id/txtviewdiscountedprice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textColor="@color/black"
-                        app:layout_constraintBottom_toTopOf="@+id/txtviewplatform"
-                        app:layout_constraintStart_toStartOf="@+id/txtviewnormalprice"
-                        app:layout_constraintTop_toBottomOf="@+id/txtviewnormalprice"
-                        tools:text="Discount Price" />
-
-                    <TextView
-                        android:id="@+id/txtviewdelivery"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textColor="@color/black"
-                        app:layout_constraintBottom_toTopOf="@+id/txtviewcoupondiscount"
-                        app:layout_constraintStart_toStartOf="@+id/txtviewplatform"
-                        app:layout_constraintTop_toBottomOf="@+id/txtviewplatform"
-                        tools:text="Delivery Fee" />
-
-                    <TextView
-                        android:id="@+id/txtviewcoupondiscount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textColor="@color/black"
-                        app:layout_constraintStart_toStartOf="@+id/txtviewdelivery"
-                        app:layout_constraintTop_toBottomOf="@+id/txtviewdelivery"
-                        tools:text="Applied Coupons" />
-
-                    <TextView
-                        android:id="@+id/txtviewplatform"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textColor="@color/black"
-                        app:layout_constraintBottom_toTopOf="@+id/txtviewdelivery"
-                        app:layout_constraintStart_toStartOf="@+id/txtviewnormalprice"
-                        app:layout_constraintTop_toBottomOf="@+id/txtviewdiscountedprice"
-                        tools:text="Platform Fee" />
-
-                    <TextView
-                        android:id="@+id/totalitemprice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:textColor="@color/black"
-                        android:textFontWeight="500"
-                        app:drawableStartCompat="@drawable/rupee_indian_wrapped"
-                        app:layout_constraintBaseline_toBaselineOf="@+id/txtviewnormalprice"
-                        app:layout_constraintEnd_toEndOf="@+id/textView12"
-                        tools:text="5343" />
-
-                    <TextView
-                        android:id="@+id/deliveryamount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        app:drawableStartCompat="@drawable/rupee_indian_wrapped"
-                        app:layout_constraintBaseline_toBaselineOf="@+id/txtviewdelivery"
-                        app:layout_constraintEnd_toEndOf="@+id/totalitemprice"
-                        tools:text="₹5343" />
-
-                    <TextView
-                        android:id="@+id/appliedcoupons"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        app:drawableStartCompat="@drawable/rupee_indian_wrapped"
-                        app:layout_constraintBaseline_toBaselineOf="@+id/txtviewcoupondiscount"
-                        app:layout_constraintEnd_toEndOf="@+id/totalitemprice"
-                        tools:text="₹5343" />
-
-                    <TextView
-                        android:id="@+id/platformfeeprice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        app:drawableStartCompat="@drawable/rupee_indian_wrapped"
-                        app:layout_constraintBaseline_toBaselineOf="@+id/txtviewplatform"
-                        app:layout_constraintEnd_toEndOf="@+id/totalitemprice"
-                        tools:text="₹5343" />
-
-                    <TextView
-                        android:id="@+id/discountpriceamount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/green"
-                        app:drawableStartCompat="@drawable/rupee_indian_wrapped"
-                        app:layout_constraintBaseline_toBaselineOf="@+id/txtviewdiscountedprice"
-                        app:layout_constraintEnd_toEndOf="@+id/totalitemprice"
-                        tools:text="₹5343" />
-
-
-                    <View
-                        android:id="@+id/view3"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edttxtcoupon"
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="8dp"
-                        android:background="@color/light_grey"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/txtviewcoupondiscount" />
-
-                    <TextView
-                        android:id="@+id/txtviewtotalpricetxt"
-                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:text="Total Amount"
-                        android:textColor="@color/black"
-                        android:textFontWeight="600"
-                        android:textSize="16sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/txtviewnormalprice"
-                        app:layout_constraintTop_toBottomOf="@+id/view3" />
+                        android:maxLength="7"
+                        android:textColor="@color/black" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Coupon"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/validatebtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/green"
+                    android:padding="0dp"
+                    android:text="Apply"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtinputlyttxtcoupon" />
 
 
-                    <TextView
-                        android:id="@+id/totalamount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        android:textFontWeight="700"
-                        app:drawableStartCompat="@drawable/rupee_indian_wrapped"
-                        app:layout_constraintBaseline_toBaselineOf="@+id/txtviewtotalpricetxt"
-                        app:layout_constraintEnd_toEndOf="@+id/totalitemprice"
-                        tools:text="₹5343" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline28"
+                app:layout_constraintStart_toStartOf="@+id/guideline27"
+                app:layout_constraintTop_toBottomOf="@+id/couponview">
+
+                <TextView
+                    android:id="@+id/textView12"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/price_details"
+                    android:textColor="@color/black"
+                    android:textFontWeight="600"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/txtviewnormalprice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toTopOf="@+id/txtviewdiscountedprice"
+                    app:layout_constraintStart_toStartOf="@+id/textView12"
+                    app:layout_constraintTop_toBottomOf="@+id/textView12"
+                    tools:text="Price (2 items)" />
+
+                <TextView
+                    android:id="@+id/txtviewdiscountedprice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toTopOf="@+id/txtviewplatform"
+                    app:layout_constraintStart_toStartOf="@+id/txtviewnormalprice"
+                    app:layout_constraintTop_toBottomOf="@+id/txtviewnormalprice"
+                    tools:text="Discount Price" />
+
+                <TextView
+                    android:id="@+id/txtviewdelivery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toTopOf="@+id/txtviewcoupondiscount"
+                    app:layout_constraintStart_toStartOf="@+id/txtviewplatform"
+                    app:layout_constraintTop_toBottomOf="@+id/txtviewplatform"
+                    tools:text="Delivery Fee" />
+
+                <TextView
+                    android:id="@+id/txtviewcoupondiscount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="@+id/txtviewdelivery"
+                    app:layout_constraintTop_toBottomOf="@+id/txtviewdelivery"
+                    tools:text="Applied Coupons" />
+
+                <TextView
+                    android:id="@+id/txtviewplatform"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toTopOf="@+id/txtviewdelivery"
+                    app:layout_constraintStart_toStartOf="@+id/txtviewnormalprice"
+                    app:layout_constraintTop_toBottomOf="@+id/txtviewdiscountedprice"
+                    tools:text="Platform Fee" />
+
+                <TextView
+                    android:id="@+id/totalitemprice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textFontWeight="500"
+                    app:drawableStartCompat="@drawable/rupee_indian_wrapped"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/txtviewnormalprice"
+                    app:layout_constraintEnd_toEndOf="@+id/textView12"
+                    tools:text="₹5343" />
+
+                <TextView
+                    android:id="@+id/deliveryamount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    app:drawableStartCompat="@drawable/rupee_indian_wrapped"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/txtviewdelivery"
+                    app:layout_constraintEnd_toEndOf="@+id/totalitemprice"
+                    tools:text="₹5343" />
+
+                <TextView
+                    android:id="@+id/appliedcoupons"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/green"
+                    app:drawableStartCompat="@drawable/rupee_indian_wrapped"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/txtviewcoupondiscount"
+                    app:layout_constraintEnd_toEndOf="@+id/totalitemprice"
+                    tools:text="₹5343" />
+
+                <TextView
+                    android:id="@+id/platformfeeprice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    app:drawableStartCompat="@drawable/rupee_indian_wrapped"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/txtviewplatform"
+                    app:layout_constraintEnd_toEndOf="@+id/totalitemprice"
+                    tools:text="₹5343" />
+
+                <TextView
+                    android:id="@+id/discountpriceamount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/green"
+                    app:drawableStartCompat="@drawable/rupee_indian_wrapped"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/txtviewdiscountedprice"
+                    app:layout_constraintEnd_toEndOf="@+id/totalitemprice"
+                    tools:text="₹5343" />
 
 
-            </androidx.cardview.widget.CardView>
+                <View
+                    android:id="@+id/view3"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/dashed_divider"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtviewcoupondiscount" />
+
+                <TextView
+                    android:id="@+id/txtviewtotalpricetxt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Total Amount"
+                    android:textColor="@color/black"
+                    android:textFontWeight="600"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/txtviewnormalprice"
+                    app:layout_constraintTop_toBottomOf="@+id/view3" />
+
+
+                <TextView
+                    android:id="@+id/totalamount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textFontWeight="700"
+                    app:drawableStartCompat="@drawable/rupee_indian_wrapped"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/txtviewtotalpricetxt"
+                    app:layout_constraintEnd_toEndOf="@+id/totalitemprice"
+                    tools:text="₹5343" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline27"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="10dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline28"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="10dp" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

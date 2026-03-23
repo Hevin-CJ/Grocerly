@@ -64,10 +64,14 @@ class SavedAddressRepoImpl @Inject constructor(private val auth: FirebaseAuth,pr
                   return@addSnapshotListener
               }
 
-              snapshot?.let {
+              if (snapshot == null || snapshot.isEmpty){
+                  trySend(NetworkResult.Success(emptyList()))
+                  return@addSnapshotListener
+              }
+
                   val address = snapshot.documents.mapNotNull { it.toObject(Address::class.java) }
                   trySend(NetworkResult.Success(address)).isSuccess
-              }
+
           }
 
           awaitClose{

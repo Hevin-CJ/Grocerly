@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ग्रॉसर्ली</string>
-    <string name="hello_blank_fragment">हैलो ब्लैंक फ्रैगमेंट</string>
     <string name="email">ईमेल</string>
     <string name="no_favourites">कोई पसंदीदा नहीं</string>
     <string name="cart">कार्ट</string>
@@ -48,7 +47,6 @@
     <string name="work">काम</string>
     <string name="other">अन्य</string>
     <string name="loading">लोड हो रहा है...</string>
-    <string name="add_cart">कार्ट में जोड़ें</string>
     <string name="are_you_sure_to_change_registered_email">क्या आप पंजीकृत ईमेल बदलना चाहते हैं?</string>
     <string name="change_credentials">क्रेडेंशियल्स बदलना है?</string>
     <string name="new_email">नया ईमेल</string>

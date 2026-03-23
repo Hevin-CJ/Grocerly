@@ -12,10 +12,13 @@ import com.example.grocerly.utils.Constants.FIREBASE_DOMAIN
 import com.example.grocerly.utils.Constants.USERS
 import com.example.grocerly.utils.Mappers.toProfileEntity
 import com.example.grocerly.utils.NetworkResult
+import com.facebook.login.LoginManager
 import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.TwitterAuthProvider
 import com.google.firebase.auth.actionCodeSettings
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -31,7 +34,7 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 
 @ActivityRetainedScoped
-class ProfileRepoImpl @Inject constructor(private val db: FirebaseFirestore,private val auth: FirebaseAuth,private val storage: FirebaseStorage,private val grocerlyDataStore: GrocerlyDataStore,private val googleSignInClientRepoImpl: GoogleSignInClientRepoImpl,private val profileLocalRepoImpl: ProfileLocalRepoImpl) {
+class ProfileRepoImpl @Inject constructor(private val db: FirebaseFirestore,private val auth: FirebaseAuth,private val storage: FirebaseStorage,private val profileLocalRepoImpl: ProfileLocalRepoImpl) {
 
     private val userId = auth.currentUser?.uid.toString()
     private val profileRef = db.collection(ACCOUNTS).document(userId)
@@ -158,32 +161,7 @@ class ProfileRepoImpl @Inject constructor(private val db: FirebaseFirestore,priv
 
 
 
-    suspend fun enableLogout(): Boolean = withContext(Dispatchers.Main) {
-       return@withContext try {
-           checkAndLogoutFromProviders()
-           auth.signOut()
-           grocerlyDataStore.clearAll()
-           true
-       }catch (e: Exception){
-           e.printStackTrace()
-           false
-       }
-    }
 
-    private suspend fun checkAndLogoutFromProviders() {
-        val provider = getLoginProviders()
-       when(provider){
-           GoogleAuthProvider.PROVIDER_ID -> {
-               googleSignInClientRepoImpl.signOut()
-           }
-       }
-    }
-
-    private fun getLoginProviders(): String? {
-        val user = auth.currentUser ?: return null
-        val providerId = user.providerData.lastOrNull()?.providerId
-        return providerId
-    }
 
 
     @Suppress("DEPRECATION")

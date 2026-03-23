@@ -1,9 +1,6 @@
 package com.example.grocerly.model
 
 import android.os.Parcelable
-import com.example.grocerly.utils.OrderStatus
-import com.example.grocerly.utils.PaymentMethodItem
-import com.google.firebase.Timestamp
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

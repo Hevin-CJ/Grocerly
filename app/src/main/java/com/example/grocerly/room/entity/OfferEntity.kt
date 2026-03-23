@@ -1,5 +1,6 @@
 package com.example.grocerly.room.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.grocerly.utils.Constants.OFFER_TABLE
@@ -14,5 +15,9 @@ data class OfferEntity(
     val buttonBgColor: String,
     val buttonTxtColor:String,
     val descriptionText: String,
-    val descriptionTextColor: String
+    val descriptionTextColor: String,
+    @ColumnInfo(defaultValue = "")
+    val productId: String,
+    @ColumnInfo(defaultValue = "")
+    val partnerId:String
 )

@@ -31,7 +31,6 @@
         app:layout_constraintGuide_end="10dp" />
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/scrollView3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
@@ -65,7 +64,6 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/textView7"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start|center"
@@ -213,7 +211,7 @@
                         tools:text="Order has placed and awaiting confirmation from seller" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/cancel_button"
+                        android:id="@+id/cancelButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -329,7 +327,6 @@
                 app:layout_constraintVertical_chainStyle="packed">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/constraintLayout4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintBottom_toTopOf="@+id/cardView7"
@@ -364,7 +361,6 @@
                         app:shapeAppearanceOverlay="@style/TopCornersCardShape">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/linearLayout11"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_margin="8dp"
@@ -500,7 +496,6 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/textView17"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start|center"

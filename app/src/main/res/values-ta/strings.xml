@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">கிரோசர்லி</string>
-    <string name="hello_blank_fragment">ஹலோ பிளாங்க் ஃபிராக்மெண்ட்</string>
     <string name="email">மின்னஞ்சல்</string>
     <string name="no_favourites">பிடித்தவை எதுவும் இல்லை</string>
     <string name="cart">வண்டி</string>
@@ -48,7 +47,6 @@
     <string name="work">வேலை</string>
     <string name="other">மற்றவை</string>
     <string name="loading">ஏற்றுகிறது...</string>
-    <string name="add_cart">வண்டியில் சேர்க்க</string>
     <string name="are_you_sure_to_change_registered_email">பதிவுசெய்யப்பட்ட மின்னஞ்சலை மாற்ற உறுதியா?</string>
     <string name="change_credentials">அடையாளங்களை மாற்ற வேண்டுமா?</string>
     <string name="new_email">புதிய மின்னஞ்சல்</string>

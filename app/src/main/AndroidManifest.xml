@@ -11,10 +11,12 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:name=".application.GrocerlyApp"
         android:localeConfig="@xml/language_config"
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:enableOnBackInvokedCallback="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -96,10 +98,42 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <service
+            android:name=".utils.PushNotificationService"
+            android:exported="false"
+            >
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+
+        </service>
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
     </application>
 
     <queries>
         <package android:name="com.facebook.katana" />
+        <package android:name="com.google.android.gms" />
+        <package android:name="com.android.vending" />
+
+        <intent>
+            <action android:name="com.google.android.gms.common.service.START" />
+        </intent>
+
+        <intent>
+            <action android:name="com.google.android.gms.auth.api.signin.Service.START" />
+        </intent>
     </queries>
 
 </manifest>

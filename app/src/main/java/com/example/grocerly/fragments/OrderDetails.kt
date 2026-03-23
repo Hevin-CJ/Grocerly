@@ -32,6 +32,7 @@ import com.example.grocerly.interfaces.ChildCategoryListener
 import com.example.grocerly.model.CartProduct
 import com.example.grocerly.model.FavouriteItem
 import com.example.grocerly.model.Order
+import com.example.grocerly.model.WishItem
 import com.example.grocerly.utils.CancellationStatus
 import com.example.grocerly.utils.NetworkResult
 import com.example.grocerly.utils.OrderStatus
@@ -296,6 +297,10 @@ class OrderDetails : Fragment() {
 
             override fun addProductToFavourites(favouriteItem: FavouriteItem) {
                ordersViewModel.insertProductIntoFavourites(favouriteItem)
+            }
+
+            override fun addProductToWishList(wishItem: WishItem) {
+                TODO("Not yet implemented")
             }
 
         })

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="120dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:backgroundTint="@color/white"
     app:strokeWidth="2dp"
-    android:layout_marginTop="12dp"
+    android:layout_margin="12dp"
     app:strokeColor="@color/light_grey">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -57,17 +58,18 @@
 
 
         <LinearLayout
+            android:id="@+id/linearLayout11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/cartproduct_background"
+            android:clickable="true"
             android:gravity="center"
             android:orientation="horizontal"
             android:padding="5dp"
-            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="@+id/txtviewproductname"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="@+id/txtviewproductname">
 
             <ImageView
                 android:id="@+id/deletebtn"
@@ -95,13 +97,15 @@
             android:id="@+id/addfavouritetocartbtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
             android:clickable="true"
-            android:layout_marginBottom="16dp"
             android:contentDescription="Add to cart"
-            android:src="@drawable/cart"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:src="@drawable/carthome"
+            app:layout_constraintBottom_toBottomOf="@+id/txtviewPrice"
+            app:layout_constraintEnd_toEndOf="@+id/linearLayout11"
+            app:layout_constraintStart_toStartOf="@+id/linearLayout11"
+            app:layout_constraintTop_toTopOf="@+id/txtviewPrice" />
+
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

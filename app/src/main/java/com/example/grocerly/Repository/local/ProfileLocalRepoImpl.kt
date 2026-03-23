@@ -12,4 +12,6 @@ class ProfileLocalRepoImpl @Inject constructor(private val profileDao: ProfileDa
 
     fun getProfile() = profileDao.getProfile()
 
+    suspend fun deleteProfile() = profileDao.deleteProfile()
+
 }

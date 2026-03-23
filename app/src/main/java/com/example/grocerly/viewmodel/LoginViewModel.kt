@@ -6,6 +6,8 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.grocerly.Repository.remote.SocialAuthRepoImpl
+import com.example.grocerly.Repository.remote.LoginRepoImpl
 import com.example.grocerly.activity.MainActivity
 import com.example.grocerly.googleclient.GoogleSignInClientRepoImpl
 import com.example.grocerly.preferences.GrocerlyDataStore
@@ -34,6 +36,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -41,7 +44,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val auth: FirebaseAuth, private val db: FirebaseFirestore,private val grocerlyDataStore: GrocerlyDataStore,private val googleSignInRepo: GoogleSignInClientRepoImpl,application: Application): AndroidViewModel(application) {
+class  LoginViewModel @Inject constructor(private val googleSignInRepo: GoogleSignInClientRepoImpl,private val socialAuthRepoImpl: SocialAuthRepoImpl,private val loginRepoImpl: LoginRepoImpl,application: Application): AndroidViewModel(application) {
 
 
 
@@ -51,11 +54,7 @@ class LoginViewModel @Inject constructor(private val auth: FirebaseAuth, private
     private var _validationState = Channel<LoginRegisterFieldState>()
     val validationState:Flow<LoginRegisterFieldState> get() = _validationState.receiveAsFlow()
 
-    fun setLoginState(loginstate:Boolean){
-        viewModelScope.launch {
-            grocerlyDataStore.setLoginState(loginstate)
-        }
-    }
+
 
     fun loginUserIntoFirebase(email: String,password: String){
 
@@ -70,13 +69,16 @@ class LoginViewModel @Inject constructor(private val auth: FirebaseAuth, private
 
     fun signInWithGoogle(){
         viewModelScope.launch {
-           try {
-              val user =  googleSignInRepo.signIn()
-               handleSuccessfulLogin(user)
-           }catch (e: Exception){
-               Log.d("errorgoogle",e.message.toString())
-               _loginstate.emit(NetworkResult.Error(FirebaseErrorMapper.getUserMessage(e)))
-           }
+            handleGoogleLogin()
+        }
+    }
+
+    private suspend fun handleGoogleLogin() {
+        if (NetworkUtils.isNetworkAvailable(getApplication())){
+            val result = socialAuthRepoImpl.signInWithGoogle()
+            handleAuthResult(result)
+        }else{
+            _loginstate.emit(NetworkResult.Error("Enable Wifi or Mobile Data"))
         }
     }
 
@@ -87,82 +89,81 @@ class LoginViewModel @Inject constructor(private val auth: FirebaseAuth, private
     }
 
     private suspend fun startSignUpWithX(activity: Activity) {
-      if (NetworkUtils.isNetworkAvailable(getApplication())){
-        try {
-            val provider = OAuthProvider.newBuilder("twitter.com").build()
-            val authResult =  auth.startActivityForSignInWithProvider(activity,provider).await()
-            authResult.user?.let {
-                handleSuccessfulLogin(it)
-            }?:_loginstate.emit(NetworkResult.Error("Twitter login failed:User not found"))
-        }catch (e: Exception){
-            _loginstate.emit(NetworkResult.Error(e.message.toString()))
-            Log.d("errortwitter",e.message.toString())
-        }
-      }else{
-          _loginstate.emit(NetworkResult.Error("Enable Wifi or Mobile data"))
+      if (NetworkUtils.isNetworkAvailable(getApplication())) {
+          socialAuthRepoImpl.firebaseSignInWithTwitter(activity).collectLatest {result ->
+              when (result) {
+                  is NetworkResult.Success -> {
+                     handleAuthResult(result)
+                  }
+                  is NetworkResult.Error -> _loginstate.emit(NetworkResult.Error(result.message))
+                  is NetworkResult.Loading -> _loginstate.emit(NetworkResult.Loading())
+                  else -> Unit
+              }
+          }
       }
     }
 
 
     fun signInWithFacebook(token: AccessToken){
         viewModelScope.launch {
-            try {
-                _loginstate.emit(NetworkResult.Loading())
-                val credential = FacebookAuthProvider.getCredential(token.token)
-                val result = auth.signInWithCredential(credential).await()
-                result.user?.let {
-                    handleSuccessfulLogin(it)
-                } ?: _loginstate.emit(NetworkResult.Error("User not found."))
-
-            } catch (e: Exception) {
-                _loginstate.emit(NetworkResult.Error(FirebaseErrorMapper.getUserMessage(e)))
-            }
+           handleFacebookLogin(token)
         }
     }
 
-    private suspend fun handleSuccessfulLogin(user: FirebaseUser) {
-        try {
-            val userId = user.uid
-            val userEmail = user.email
-            val sessionToken = UUID.randomUUID().toString()
+    private suspend fun handleFacebookLogin(token: AccessToken) {
+        if (NetworkUtils.isNetworkAvailable(getApplication())){
+            socialAuthRepoImpl.firebaseSignInWithFacebook(token).collectLatest {result->
+                handleAuthResult(result = result)
+            }
+        }else{
+            _loginstate.emit(NetworkResult.Error("Enable Wifi or Mobile Data"))
+        }
+    }
 
-            Log.d("LoginViewModel", "Handling successful login for user: ${user.email}")
 
-            val accountDocRef = db.collection(ACCOUNTS).document(userId)
-            if (accountDocRef.get().await().exists()) {
-                accountDocRef.update("email", userEmail).await()
+    private suspend fun handleAuthResult(result: NetworkResult<FirebaseUser>) {
+        when (result) {
+            is NetworkResult.Success -> {
+                result.data?.let { user ->
+                    finalizeLogin(user)
+                }
             }
 
+            is NetworkResult.Error -> {
+                _loginstate.emit(NetworkResult.Error(result.message))
+            }
 
-            val sessionData = mapOf("sessionToken" to sessionToken)
-            db.collection(USERS).document(userId).set(sessionData, SetOptions.merge()).await()
+            is NetworkResult.Loading -> {
+                _loginstate.emit(NetworkResult.Loading())
+            }
 
-            grocerlyDataStore.setSessionToken(sessionToken)
-            setLoginState(true)
-
-
-            _loginstate.emit(NetworkResult.Success(user))
-
-        } catch (e: Exception) {
-            Log.e("LoginViewModel", "Post-login Firestore/DataStore Exception: ${e.message}")
-            _loginstate.emit(NetworkResult.Error("Failed to finalize session: ${FirebaseErrorMapper.getUserMessage(e)}"))
+            else -> Unit
         }
+    }
+
+    private suspend fun finalizeLogin(user: FirebaseUser) {
+        val result = loginRepoImpl.saveUserSession(user)
+        _loginstate.emit(result)
     }
 
 
 
     private suspend fun performLoginUser(email: String,password: String){
+        _loginstate.emit(NetworkResult.Loading())
+        val loginResult = loginRepoImpl.makeFirebaseLogin(email, password)
 
-        try {
-            _loginstate.emit(NetworkResult.Loading())
-            val result = auth.signInWithEmailAndPassword(email,password).await()
-            result.user?.let {
-                handleSuccessfulLogin(it)
-            }?: _loginstate.emit(NetworkResult.Error("User authentication failed."))
-        }catch (e: Exception){
-            _loginstate.emit(NetworkResult.Error(FirebaseErrorMapper.getUserMessage(e)))
+        when (loginResult) {
+            is NetworkResult.Success -> {
+
+                loginResult.data?.let { user ->
+                    finalizeLogin(user)
+                }
+            }
+            is NetworkResult.Error -> {
+                _loginstate.emit(NetworkResult.Error(loginResult.message))
+            }
+            else -> Unit
         }
-
     }
 
 

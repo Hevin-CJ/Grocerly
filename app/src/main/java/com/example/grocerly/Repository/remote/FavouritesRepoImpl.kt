@@ -20,7 +20,7 @@ class FavouritesRepoImpl @Inject constructor (private val db: FirebaseFirestore,
 
     private val favouriteRef = db.collection(USERS).document(userId).collection(FAVOURITES)
 
-   suspend fun addToFavouritesFirebase(favouriteItem: FavouriteItem):NetworkResult<FavouriteItem>{
+   suspend fun addToFavouritesFirebase(favouriteItem: FavouriteItem):NetworkResult<Unit>{
        return try {
 
             val favouriteDocRef = favouriteRef.document(favouriteItem.product.productId)
@@ -30,13 +30,14 @@ class FavouritesRepoImpl @Inject constructor (private val db: FirebaseFirestore,
                 .await()
 
             if (existingSnapshot.exists()) {
-               return NetworkResult.Error("Your Item (${favouriteItem.product.itemName}) Already \n Exists In Favourites")
+                favouriteDocRef.delete().await()
+                NetworkResult.Success(Unit)
+            }else{
+                val updatedItem = favouriteItem.copy(favouriteId = favouriteItem.product.productId)
+                favouriteDocRef.set(updatedItem).await()
+                NetworkResult.Success(Unit)
             }
 
-            val updatedItem = favouriteItem.copy(favouriteId = favouriteItem.product.productId)
-            favouriteDocRef.set(updatedItem).await()
-
-          NetworkResult.Success(favouriteItem)
 
         }catch (e:Exception){
             NetworkResult.Error(e.message)

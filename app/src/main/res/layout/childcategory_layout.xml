@@ -16,8 +16,10 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="160dp"
-        android:layout_height="250dp"
+        android:layout_height="270dp"
         android:background="@drawable/custom_item_background">
+
+
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView2"
@@ -205,26 +207,58 @@
             android:id="@+id/addtocartbtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
             android:background="@color/white"
             android:src="@drawable/carthome"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/materialCardView9"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout14" />
+            app:layout_constraintTop_toTopOf="@+id/materialCardView9" />
 
-        <ImageView
-            android:id="@+id/addtofavouritesbtn"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_marginStart="16dp"
-            android:clickable="true"
-            android:src="@drawable/heartfavourite"
-            app:layout_constraintBottom_toBottomOf="@+id/addtocartbtn"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/materialCardView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/light_white"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/addtocartbtn"
-            app:tint="#D3D3D3" />
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout14">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp">
+
+
+                <ImageView
+                    android:id="@+id/addtofavouritesbtn"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:clickable="true"
+                    android:src="@drawable/heartfavourite"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.507"
+                    app:tint="#D3D3D3" />
+
+                <ImageView
+                    android:id="@+id/addtowishlistButton"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="24dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/wishlist"
+                    app:layout_constraintBottom_toBottomOf="@+id/addtofavouritesbtn"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/addtofavouritesbtn"
+                    app:layout_constraintTop_toTopOf="@+id/addtofavouritesbtn"
+                    app:layout_constraintVertical_bias="0.0" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

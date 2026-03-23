@@ -1,6 +1,18 @@
 package com.example.grocerly.Repository.remote
 
+import android.content.Context
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
+import androidx.work.workDataOf
 import com.example.grocerly.model.Order
+import com.example.grocerly.room.dao.PendingOrderDao
+import com.example.grocerly.room.entity.PendingOrderEntity
+import com.example.grocerly.utils.Constants.EARNED_COUPONS
 import com.example.grocerly.utils.Constants.ORDERS
 import com.example.grocerly.utils.Constants.PARTNERS
 import com.example.grocerly.utils.Constants.PAYMENTS
@@ -8,16 +20,20 @@ import com.example.grocerly.utils.Constants.SAVED_CARDS
 import com.example.grocerly.utils.Constants.USERS
 import com.example.grocerly.utils.NetworkResult
 import com.example.grocerly.utils.PaymentMethodItem
+import com.example.grocerly.worker.PlaceOrderWorker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.tasks.await
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.collections.emptyList
 
 
 @ActivityRetainedScoped
-class PaymentRepoImpl @Inject constructor( private val auth: FirebaseAuth,private val db: FirebaseFirestore,private val cartRepoImpl: CartRepoImpl) {
+class PaymentRepoImpl @Inject constructor( private val auth: FirebaseAuth,private val db: FirebaseFirestore,private val cartRepoImpl: CartRepoImpl,private val pendingOrderDao: PendingOrderDao,@ApplicationContext private val context: Context) {
 
     private val userId = auth.currentUser?.uid.toString()
     private val cardRef = db.collection(USERS).document(userId).collection(SAVED_CARDS)
@@ -63,47 +79,48 @@ class PaymentRepoImpl @Inject constructor( private val auth: FirebaseAuth,privat
 
 
 
-    suspend fun sendOrderToUserAndSeller(paymentType:String,order: Order): NetworkResult<Unit>{
+    suspend fun sendOrderToUserAndSeller(paymentType:String,order: Order,appliedCouponId: String?=null): NetworkResult<Unit>{
         return try {
 
-            val updatedItems = order.items.map { it.copy(orderedTime = System.currentTimeMillis()) }
-            val updatedOrder = order.copy(paymentType = paymentType, userId = userId, items = updatedItems, timestamp = System.currentTimeMillis())
-
-            val batch = db.batch()
-
-           val globalOrderRef =  db.collection(ORDERS).document(order.orderId)
-            batch.set(globalOrderRef, updatedOrder)
-
-            val userOrderRef = db.collection(USERS)
-                .document(userId)
-                .collection(ORDERS)
-                .document(order.orderId)
-            batch.set(userOrderRef, updatedOrder)
+            val entity = PendingOrderEntity(
+                orderJson = Gson().toJson(order),
+                paymentType = paymentType,
+                appliedCouponId = appliedCouponId
+            )
+            val roomId = pendingOrderDao.insertPendingOrder(entity).toInt()
 
 
-            val itemsGroupedBySeller = updatedOrder.items.groupBy { it.product.partnerId }
+            val workData = workDataOf("room_order_id" to roomId)
 
-            itemsGroupedBySeller.forEach {(sellerId,sellerItems) ->
-               val sellerOrder = updatedOrder.copy(items = sellerItems)
-                val sellerOrderRef = db.collection(PARTNERS)
-                    .document(sellerId)
-                    .collection(ORDERS)
-                    .document(order.orderId)
-                batch.set(sellerOrderRef, sellerOrder)
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
 
-            }
+            val orderWorkRequest = OneTimeWorkRequestBuilder<PlaceOrderWorker>()
+                .setInputData(workData)
+                .setConstraints(constraints)
+                .setBackoffCriteria(
+                    BackoffPolicy.EXPONENTIAL,
+                    WorkRequest.MIN_BACKOFF_MILLIS,
+                    TimeUnit.MILLISECONDS
+                )
+                .build()
 
-            order.items.forEach { item ->
-                cartRepoImpl.deleteItemFromCart(item)
-            }
+            WorkManager.getInstance(context).enqueueUniqueWork(
+                "place_order_${order.orderId}",
+                ExistingWorkPolicy.REPLACE,
+                orderWorkRequest
+            )
 
-            batch.commit().await()
 
             NetworkResult.Success(Unit)
-        }catch (e: Exception){
-            NetworkResult.Error(e.message)
+        } catch (e: Exception) {
+            NetworkResult.Error(e.message ?: "Failed to queue order")
         }
     }
+
+
+
 
 
     suspend fun fetchPaymentHeader(): NetworkResult<List<PaymentMethodItem.Header>>{

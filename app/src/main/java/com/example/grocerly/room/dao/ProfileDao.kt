@@ -15,7 +15,10 @@ interface ProfileDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertProfile(profile: ProfileEntity)
 
-    @Query("SELECT * FROM profile_entity_table LIMIT 1")
+    @Query("SELECT * FROM PROFILE_ENTITY_TABLE LIMIT 1")
     fun getProfile(): Flow<ProfileEntity?>
+
+    @Query("DELETE FROM PROFILE_ENTITY_TABLE")
+    suspend fun deleteProfile()
 
 }
