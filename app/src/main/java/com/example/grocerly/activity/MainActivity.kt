@@ -13,24 +13,18 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.grocerly.R
 import com.example.grocerly.databinding.ActivityMainBinding
+import com.example.grocerly.fragments.Home
 import com.example.grocerly.fragments.Payments
-import com.example.grocerly.model.Order
 import com.example.grocerly.preferences.GrocerlyDataStore
-import com.example.grocerly.utils.Constants.ORDERS
-import com.example.grocerly.utils.Constants.USERS
 import com.example.grocerly.utils.LocaleUtil
-import com.example.grocerly.utils.PermissionManager
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import com.razorpay.PaymentResultListener
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -39,8 +33,6 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
-
-
 
     @Inject
     lateinit var auth: FirebaseAuth
@@ -51,68 +43,61 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
     @Inject
     lateinit var grocerlyDataStore: GrocerlyDataStore
 
-
+    private var lastHomeClickTime: Long = 0
+    private val DOUBLE_CLICK_TIME_DELTA: Long = 300
 
     private lateinit var navController: NavController
 
-
     override fun attachBaseContext(newBase: Context) {
-        val updatedContext = runBlocking {  LocaleUtil.applyLocale(newBase) }
+        val updatedContext = runBlocking { LocaleUtil.applyLocale(newBase) }
         super.attachBaseContext(updatedContext)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(binding.root)
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         navController = navHostFragment.navController
 
-        binding.tabLayoutmain.setupWithNavController(navController)
-
-        navController.addOnDestinationChangedListener { _,destination,_->
-            when(destination.id){
-                R.id.cart,R.id.splash,R.id.login,R.id.signUp,R.id.checkout,R.id.payments,R.id.orderPlaced ->{
-                  setTabLayoutVisibility(false)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.cart, R.id.splash, R.id.login, R.id.signUp, R.id.checkout, R.id.payments, R.id.orderPlaced -> {
+                    setTabLayoutVisibility(false)
                 }
                 else -> {
-                   setTabLayoutVisibility(true)
+                    setTabLayoutVisibility(true)
                 }
             }
         }
 
+        // Initialize graph. The listeners are now safely attached inside this function.
         setNavigationGraph()
-        setBottomNavigationListener()
         subscribeToProductUpdates()
     }
 
+    private fun setupBottomNavigation() {
+        binding.tabLayoutmain.setOnItemReselectedListener { item ->
+            if (item.itemId == R.id.home) {
+                val clickTime = System.currentTimeMillis()
 
+                if (clickTime - lastHomeClickTime < DOUBLE_CLICK_TIME_DELTA) {
 
-    private fun setBottomNavigationListener() {
-        binding.tabLayoutmain.setOnItemSelectedListener { item ->
-            val destinationId = item.itemId
-            val currentDest = navController.currentDestination?.id
+                    val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView)
+                    val currentFragment = navHostFragment?.childFragmentManager?.fragments?.firstOrNull()
 
-            if (currentDest != destinationId) {
-                navController.navigate(
-                    destinationId,
-                    null,
-                    NavOptions.Builder()
-                        .setPopUpTo(navController.graph.startDestinationId, false)
-                        .setLaunchSingleTop(true)
-                        .build()
-                )
+                    if (currentFragment is Home) {
+                        currentFragment.resetAndScrollToTop()
+                    }
+                }
+                lastHomeClickTime = clickTime
             }
-            true
         }
-
     }
 
     fun setTabLayoutVisibility(visible: Boolean) {
         binding.tabLayoutmain.visibility = if (visible) View.VISIBLE else View.GONE
     }
-
 
     fun setNavigationGraph() {
         lifecycleScope.launch {
@@ -135,14 +120,20 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
                 }
             } else null
 
+            // 1. Set the Graph first
             navController.setGraph(graphId, bundle)
+
+            // 2. Setup standard NavigationUI (This natively handles multiple backstacks and state saving!)
+            binding.tabLayoutmain.setupWithNavController(navController)
+
+            // 3. Setup the double-tap to scroll top
+            setupBottomNavigation()
         }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-
 
         val orderId = intent.getStringExtra("orderId")
         val productId = intent.getStringExtra("productId")
@@ -164,10 +155,8 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         }
     }
 
-
-
     override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp() ||  super.onSupportNavigateUp()
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
     override fun onPaymentSuccess(p0: String?) {
@@ -182,7 +171,7 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as? NavHostFragment
         val currentFragment = navHostFragment?.childFragmentManager?.primaryNavigationFragment
         if (currentFragment is Payments) {
-            currentFragment.onPaymentError(p0,p1)
+            currentFragment.onPaymentError(p0, p1)
         }
     }
 
@@ -191,14 +180,10 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         FirebaseMessaging.getInstance().subscribeToTopic(topic)
             .addOnCompleteListener { task ->
                 var msg = "Subscribed to product updates!"
-
                 if (!task.isSuccessful) {
                     msg = "Failed to subscribe to product updates."
                 }
-                Log.d("messagefromfcm",msg)
+                Log.d("messagefromfcm", msg)
             }
     }
-
 }
-
-

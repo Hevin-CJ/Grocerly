@@ -4,6 +4,7 @@ package com.example.grocerly.preferences
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.IOException
+import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
@@ -18,18 +19,22 @@ import kotlinx.coroutines.flow.map
 private val Context.loginDataStore: DataStore<Preferences> by preferencesDataStore(name = "GROCERLY")
 private val Context.languageDataStore: DataStore<Preferences> by preferencesDataStore("language_prefs")
 private val Context.sessionDataStore: DataStore<Preferences> by preferencesDataStore("session_prefs")
+private val Context.fcmDataStore: DataStore<Preferences> by preferencesDataStore("fcm_prefs")
 
 class GrocerlyDataStore(context: Context) {
 
     private val loginDataStore = context.loginDataStore
     private val languageDataStore = context.languageDataStore
     private val sessionDataStore = context.sessionDataStore
+    private val fcmDataStore = context.fcmDataStore
+
 
 
     companion object {
         val isLoggedInKey = booleanPreferencesKey("IS_LOGGED")
         val savedLanguage = stringPreferencesKey("SAVED_LANGUAGE")
         val sessionKey = stringPreferencesKey("session_token_key")
+        val fcmTokenKey = stringPreferencesKey("FCM_TOKEN")
     }
 
     suspend fun setLoginState(isLoggedIn:Boolean){
@@ -63,6 +68,27 @@ class GrocerlyDataStore(context: Context) {
                 val token =  preferences[sessionKey] ?: ""
                 token
             }
+    }
+
+
+    fun getSavedFcmToken(): Flow<String> {
+        return fcmDataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }
+            .map { preferences ->
+                preferences[fcmTokenKey] ?: ""
+            }
+    }
+
+    suspend fun saveFcmTokenLocally(token: String) {
+        fcmDataStore.edit { preferences ->
+            preferences[fcmTokenKey] = token
+        }
     }
 
      fun getLanguage(): Flow<String>{
@@ -100,6 +126,7 @@ class GrocerlyDataStore(context: Context) {
         loginDataStore.edit { it.clear() }
         languageDataStore.edit { it.clear() }
         sessionDataStore.edit { it.clear() }
+        fcmDataStore.edit { it.clear() }
     }
 
 

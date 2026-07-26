@@ -2,8 +2,10 @@ package com.example.grocerly.adapters.viewholder
 
 import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
+import com.example.grocerly.R
 import com.example.grocerly.databinding.PaymentHeaderLayoutBinding
 import com.example.grocerly.utils.PaymentMethodItem
 
@@ -12,13 +14,15 @@ class HeaderViewHolder(private val binding: PaymentHeaderLayoutBinding, private 
     fun bindHeader(header: PaymentMethodItem.Header,position:Int){
         binding.apply {
             txtviewpaymenttype.text = header.title
+            if (header.icon.isEmpty()) {
+                imageView15.setImageResource(R.drawable.placeholderimage)
+                return
+            }
 
-            Glide.with(binding.root.context)
-                .load(header.icon)
-                .priority(Priority.IMMEDIATE)
-                .into(binding.imageView15)
-
-            Log.d("headericon",header.icon)
+            imageView15.load(header.icon) {
+                error(R.drawable.noimage)
+                crossfade(200)
+            }
 
             creditcardlayout.setOnClickListener {
                 onExpandClick(position,header)

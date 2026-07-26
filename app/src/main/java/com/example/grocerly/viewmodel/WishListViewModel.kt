@@ -69,39 +69,20 @@ class WishListViewModel @Inject constructor(application: Application
 
     private suspend fun fetchCartItemsFromDb() {
        cartRepoImpl.fetchAllCartItems().collectLatest { result ->
-            when(result){
-                is NetworkResult.Error<*> -> {
-                    uiState_.update {
-                        it.copy(
-                            isLoading = false
-                        )
-                    }
-                    uiEvents_.send(ShowMessage(result.message.toString()))
-                }
-                is NetworkResult.Loading<*> ->{
-                    uiState_.update { it.copy(isLoading = false) }
-                }
-                is NetworkResult.Success<*> -> {
-                    uiState_.update {
-                        it.copy(
-                            isLoading = false,
-                            cartItems = result.data ?: emptyList()
-                        )
-                    }
-                }
-                is NetworkResult.UnSpecified<*> -> {
-                    uiState_.update {
-                        it.copy(
-                            isLoading = false
-                        )
-                    }
-                }
-            }
+           if (result is NetworkResult.Success) {
+               uiState_.update {
+                   it.copy(cartItems = result.data ?: emptyList())
+               }
+           } else if (result is NetworkResult.Error) {
+               uiEvents_.send(ShowMessage(result.message.toString()))
+           }
         }
     }
 
     private  suspend fun implementRemoveWishItemFromWishList(wishItem: WishItem) {
         if (NetworkUtils.isNetworkAvailable(getApplication())){
+
+            uiState_.update { it.copy(isLoading = true) }
             val response = wishListRepoImpl.removeItemFromWishList(wishItem)
             when(response) {
                 is NetworkResult.Success -> {
@@ -144,42 +125,22 @@ class WishListViewModel @Inject constructor(application: Application
 
     private suspend fun implementAddWishItemToCart(wishItem: WishItem) {
         if (NetworkUtils.isNetworkAvailable(getApplication())){
+            uiState_.update { it.copy(isLoading = true) }
             val response = wishListRepoImpl.addWishListItemToCart(wishItem)
-            when(response) {
+            when (response) {
                 is NetworkResult.Success -> {
-                    uiState_.update {
-                        it.copy(
-                            isLoading = false
-                        )
-                    }
+                    uiState_.update { it.copy(isLoading = false) }
                 }
-
                 is NetworkResult.Error<*> -> {
-                    uiState_.update {
-                        it.copy(
-                            isLoading = false
-                        )
-                    }
-
+                    uiState_.update { it.copy(isLoading = false) }
                     uiEvents_.send(ShowMessage(response.message.toString()))
                 }
-                is NetworkResult.Loading<*> -> {
-                    uiState_.update {
-                        it.copy(
-                            isLoading = true
-                        )
-                    }
-                }
-                is NetworkResult.UnSpecified<*> ->{
-                    uiState_.update {
-                        it.copy(
-                            isLoading = false
-                        )
-                    }
+                else -> {
+                    uiState_.update { it.copy(isLoading = false) }
                 }
             }
-        }else{
-           uiEvents_.send(ShowMessage("No Internet Connection"))
+        } else {
+            uiEvents_.send(ShowMessage("Enable Wifi or Mobile Data"))
         }
     }
 

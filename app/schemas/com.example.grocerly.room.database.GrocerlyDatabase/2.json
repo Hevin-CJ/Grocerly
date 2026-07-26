@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "b44a353d25a4e0df7f612bf876c893d0",
+    "identityHash": "1c5cf79368c3b68d5e4eb88397bf8e95",
     "entities": [
       {
         "tableName": "category_entity_table",
@@ -203,11 +203,112 @@
             "id"
           ]
         }
+      },
+      {
+        "tableName": "products_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`productId` TEXT NOT NULL, `partnerId` TEXT NOT NULL, `image` TEXT, `itemName` TEXT NOT NULL, `itemPrice` INTEGER, `itemOriginalPrice` INTEGER, `category` TEXT NOT NULL, `itemRating` REAL, `totalRating` INTEGER, `searchKeywords` TEXT NOT NULL, `isFavourite` INTEGER NOT NULL, `isInCart` INTEGER NOT NULL, `isEnabled` INTEGER, `maxQuantity` INTEGER, `quantityType` TEXT NOT NULL, `packUpTime` TEXT NOT NULL, PRIMARY KEY(`productId`))",
+        "fields": [
+          {
+            "fieldPath": "productId",
+            "columnName": "productId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "partnerId",
+            "columnName": "partnerId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "image",
+            "columnName": "image",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "itemName",
+            "columnName": "itemName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "itemPrice",
+            "columnName": "itemPrice",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "itemOriginalPrice",
+            "columnName": "itemOriginalPrice",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "itemRating",
+            "columnName": "itemRating",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "totalRating",
+            "columnName": "totalRating",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "searchKeywords",
+            "columnName": "searchKeywords",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFavourite",
+            "columnName": "isFavourite",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isInCart",
+            "columnName": "isInCart",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isEnabled",
+            "columnName": "isEnabled",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "maxQuantity",
+            "columnName": "maxQuantity",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "quantityType",
+            "columnName": "quantityType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "packUpTime",
+            "columnName": "packUpTime",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "productId"
+          ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b44a353d25a4e0df7f612bf876c893d0')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1c5cf79368c3b68d5e4eb88397bf8e95')"
     ]
   }
 }

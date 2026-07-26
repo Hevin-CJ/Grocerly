@@ -82,6 +82,8 @@ dependencies {
     implementation(libs.converter.moshi)
 
 
+    //swiperefreshlayout
+    implementation(libs.androidx.swiperefreshlayout)
 
 
 

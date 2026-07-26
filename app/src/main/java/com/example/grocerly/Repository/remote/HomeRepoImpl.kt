@@ -8,69 +8,105 @@ import com.example.grocerly.model.Category
 import com.example.grocerly.model.OfferItem
 import com.example.grocerly.model.ParentCategoryItem
 import com.example.grocerly.model.Product
+import com.example.grocerly.room.dao.ProductDao
 import com.example.grocerly.utils.Constants.ADDRESS
 import com.example.grocerly.utils.Constants.OFFERS
 import com.example.grocerly.utils.Constants.PRODUCTS
 import com.example.grocerly.utils.Constants.USERS
 import com.example.grocerly.utils.Mappers.toCategory
 import com.example.grocerly.utils.Mappers.toCategoryEntity
+import com.example.grocerly.utils.Mappers.toDomainModelList
+import com.example.grocerly.utils.Mappers.toEntityList
 import com.example.grocerly.utils.Mappers.toOfferEntityList
 import com.example.grocerly.utils.NetworkResult
 import com.example.grocerly.utils.ProductCategory
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.scopes.ActivityRetainedScoped
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 
 @ActivityRetainedScoped
-class HomeRepoImpl @Inject constructor(private val auth: FirebaseAuth,private val db:FirebaseFirestore,private val addressRepoImpl: SavedAddressRepoImpl,private val categoryLocalRepoImpl: CategoryLocalRepoImpl,private val offerLocalRepoImpl: OfferLocalRepoImpl) {
+class HomeRepoImpl @Inject constructor(private val auth: FirebaseAuth,private val db:FirebaseFirestore,private val addressRepoImpl: SavedAddressRepoImpl,private val categoryLocalRepoImpl: CategoryLocalRepoImpl,private val productDao: ProductDao) {
 
 
 
-     fun fetchProductFromFirebase(): Flow<NetworkResult<List<ParentCategoryItem>>> = callbackFlow {
+    fun getProductsFlow(): Flow<NetworkResult<List<ParentCategoryItem>>> {
+        return productDao.getAllProducts().map { products ->
+            if (products.isEmpty()) {
+                NetworkResult.Loading()
+            } else {
+                val groupedProducts = products.groupBy { it.category }
+                val categories = groupedProducts.map { (category, prods) ->
+                    ParentCategoryItem(
+                        categoryName = category.name,
+                        childCategoryItems = prods.toDomainModelList()
+                    )
+                }.sortedBy { it.categoryName }
 
-         trySend(NetworkResult.Loading())
-
-
-         val query = db.collectionGroup(PRODUCTS)
-             .whereEqualTo("isEnabled", true)
-
-             val listener = query.addSnapshotListener { snapshot, error ->
-                 if (error != null) {
-                     trySend(NetworkResult.Error(error.message)).isFailure
-                     Log.d("errorfound",error.message.toString())
-                     return@addSnapshotListener
-                 }
-
-                 if (snapshot == null || snapshot.isEmpty) {
-                     trySend(NetworkResult.Success(emptyList()))
-                     return@addSnapshotListener
-                 }
+                NetworkResult.Success(categories)
+            }
+        }
+    }
 
 
-                     val groupedProducts = snapshot.documents.mapNotNull { it.toObject(Product::class.java) }.groupBy { it.category }
+    fun syncProductsFromNetwork() {
+        try {
+            val query = db.collectionGroup(PRODUCTS)
+                .whereEqualTo("isEnabled", true)
 
-                     val categories = groupedProducts.map { (category, products) ->
-                         ParentCategoryItem(
-                             categoryName = category.displayName,
-                             childCategoryItems = products
-                         )
-                     }.sortedBy { it.categoryName }
+            query.addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("SyncError", "Failed to sync products: ${error.message}")
+                    return@addSnapshotListener
+                }
 
-                     trySend(NetworkResult.Success(categories))
+                if (snapshot == null) return@addSnapshotListener
 
+                val productsToUpsert = mutableListOf<Product>()
+                val productIdsToDelete = mutableListOf<String>()
 
-             }
+                for (change in snapshot.documentChanges) {
+                    val product = change.document.toObject(Product::class.java)
 
-             awaitClose{
-                 listener.remove()
-             }
+                    when (change.type) {
+                        DocumentChange.Type.ADDED, DocumentChange.Type.MODIFIED -> {
+                            productsToUpsert.add(product)
+                        }
+                        DocumentChange.Type.REMOVED -> {
+                            productIdsToDelete.add(product.productId)
+                        }
+                    }
+                }
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        if (productsToUpsert.isNotEmpty()) {
+                            productDao.upsertProducts(productsToUpsert.toEntityList())
+                        }
+
+                        if (productIdsToDelete.isNotEmpty()) {
+                            productDao.deleteProductsById(productIdsToDelete)
+                            Log.d("SyncSuccess", "Deleted ${productIdsToDelete.size} products from Room")
+                        }
+                    } catch (e: Exception) {
+                        Log.e("SyncError", "Room Database Error: ${e.message}")
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("SyncError", "Firestore Listener Setup Error: ${e.message}")
+        }
     }
 
     fun fetchByCategoryFromFirebase(category: ProductCategory): Flow<NetworkResult<List<Product>>> = callbackFlow {
@@ -105,26 +141,28 @@ class HomeRepoImpl @Inject constructor(private val auth: FirebaseAuth,private va
 
 
 
-    suspend fun getCategoriesFromFirebase(): NetworkResult<List<Category>>{
-        return try {
-
-            val querySnapshot = db.collectionGroup("categories").get().await()
-            val fetchedCategories = querySnapshot.toObjects(Category::class.java).sortedBy { it.id }
-
-            categoryLocalRepoImpl.upsertCategory(fetchedCategories.map { it.toCategoryEntity() })
-            NetworkResult.Success(fetchedCategories)
-
-        }catch (e: Exception){
-            try {
-                val cachedCategories = categoryLocalRepoImpl.getCategories().first()
-                if (cachedCategories.isNotEmpty()) {
-                    NetworkResult.Success(cachedCategories.map { it.toCategory() })
+    fun getCategoriesFlow(): Flow<NetworkResult<List<Category>>> {
+        return categoryLocalRepoImpl.getCategories()
+            .map { localEntities ->
+                if (localEntities.isNotEmpty()) {
+                    NetworkResult.Success(localEntities.map { it.toCategory() })
                 } else {
-                    NetworkResult.Error(e.message ?: "Unknown Error")
+                    NetworkResult.Loading()
                 }
-            } catch (cacheError: Exception) {
-                NetworkResult.Error(e.message)
             }
+    }
+
+
+    suspend fun syncCategoriesFromNetwork() {
+        try {
+            val querySnapshot = db.collectionGroup("categories").get().await()
+
+            if (!querySnapshot.isEmpty) {
+                val fetchedCategories = querySnapshot.toObjects(Category::class.java).sortedBy { it.id }
+                categoryLocalRepoImpl.upsertCategory(fetchedCategories.map { it.toCategoryEntity() })
+            }
+        } catch (e: Exception) {
+            Log.e("CategorySync", "Failed to sync categories: ${e.message}")
         }
     }
 

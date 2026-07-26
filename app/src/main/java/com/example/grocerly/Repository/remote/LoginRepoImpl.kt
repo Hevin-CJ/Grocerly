@@ -23,7 +23,8 @@ import javax.inject.Inject
 @ActivityRetainedScoped
 class LoginRepoImpl @Inject constructor(private val auth: FirebaseAuth,
                                         private val db: FirebaseFirestore,
-                                        private val grocerlyDataStore: GrocerlyDataStore
+                                        private val grocerlyDataStore: GrocerlyDataStore,
+    private val messaging: FirebaseMessaging
 ) {
 
 
@@ -70,8 +71,6 @@ class LoginRepoImpl @Inject constructor(private val auth: FirebaseAuth,
             grocerlyDataStore.setSessionToken(sessionToken)
             grocerlyDataStore.setLoginState(true)
 
-           fetchAndSaveFcmToken()
-
            NetworkResult.Success(user)
 
         } catch (e: Exception) {
@@ -80,29 +79,5 @@ class LoginRepoImpl @Inject constructor(private val auth: FirebaseAuth,
         }
     }
 
-    suspend fun fetchAndSaveFcmToken() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
-        try {
-            val token = FirebaseMessaging.getInstance().token.await()
-            Log.d("FCM_TOKEN", "Current Token: $token")
-
-            saveTokenToFirestore(userId, token)
-
-        } catch (e: Exception) {
-
-            Log.e("FCM_TOKEN", "Process failed", e)
-        }
-    }
-
-    private suspend fun saveTokenToFirestore(userId: String, token: String) {
-        val db = FirebaseFirestore.getInstance()
-
-
-        db.collection(USERS).document(userId)
-            .update(FCM_TOKEN, token)
-            .await()
-
-        Log.d("FCM_TOKEN", "Token saved for user $userId")
-    }
 }

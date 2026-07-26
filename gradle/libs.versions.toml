@@ -48,6 +48,7 @@ firebaseStorage = "22.0.0"
 appcompatVersion = "1.7.1"
 recyclerview = "1.4.0"
 stagestepbar = "1.2.0"
+swiperefreshlayout = "1.2.0"
 viewpager2 = "1.1.0"
 firebaseFunctions = "22.0.0"
 workRuntimeKtx = "2.11.1"
@@ -75,6 +76,7 @@ androidx-navigation-ui = { module = "androidx.navigation:navigation-ui", version
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 ccp = { module = "com.hbb20:ccp", version.ref = "ccpVersion" }
 checkout = { module = "com.razorpay:checkout", version.ref = "checkout" }

@@ -2,22 +2,16 @@ package com.example.grocerly.adapters
 
 import android.graphics.Color
 import android.graphics.Paint
-import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
-import androidx.databinding.BindingAdapter
-import com.bumptech.glide.Glide
-import java.util.Locale
 import androidx.core.graphics.toColorInt
-import com.bumptech.glide.RequestBuilder
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
+import androidx.databinding.BindingAdapter
+import coil.load
 import com.example.grocerly.R
 import com.example.grocerly.utils.QuantityType
+import java.util.Locale
 
 object OfferBindingAdapter {
 
@@ -25,13 +19,14 @@ object OfferBindingAdapter {
     @JvmStatic
     fun setOfferImage(imageView: ImageView,savedFile: String){
 
-        try {
-            Glide.with(imageView.context)
-                .load(savedFile)
-                .into(imageView)
+        if (savedFile.isEmpty()) {
+            imageView.setImageResource(R.drawable.placeholderimage)
+            return
+        }
 
-        }catch (e:Exception){
-            e.printStackTrace()
+        imageView.load(savedFile) {
+            error(R.drawable.noimage)
+            crossfade(200)
         }
 
     }
@@ -40,18 +35,16 @@ object OfferBindingAdapter {
     @BindingAdapter("setCategoryImage")
     @JvmStatic
     fun setCategoryImage(imageView: ImageView,url: String){
-        val requestOptions = RequestOptions()
-            .placeholder(R.drawable.placeholderimage)
-            .error(R.drawable.noimage)
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
 
-        Glide.with(imageView.context)
-            .applyDefaultRequestOptions(requestOptions)
-            .load(url)
-            .thumbnail(Glide.with(imageView.context)
-                .load(url)
-                .sizeMultiplier(0.25f) )
-            .into(imageView)
+        if (url.isEmpty()) {
+            imageView.setImageResource(R.drawable.placeholderimage)
+            return
+        }
+
+        imageView.load(url) {
+            error(R.drawable.noimage)
+            crossfade(200)
+        }
     }
 
     @JvmStatic

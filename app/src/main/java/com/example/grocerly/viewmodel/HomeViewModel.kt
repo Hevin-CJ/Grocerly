@@ -28,6 +28,7 @@ import com.example.grocerly.utils.NetworkResult
 import com.example.grocerly.utils.NetworkUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -45,7 +46,6 @@ class HomeViewModel @Inject constructor(
     application: Application,
     private val homeRepoImpl: HomeRepoImpl,
     private val cartRepoImpl: CartRepoImpl,
-    private val categoryLocalRepoImpl: CategoryLocalRepoImpl,
     private val offerRepoImpl: OfferRepoImpl,
     private val favouritesRepoImpl: FavouritesRepoImpl,
     private val savedAddressRepoImpl: SavedAddressRepoImpl,
@@ -66,17 +66,54 @@ class HomeViewModel @Inject constructor(
         fetchProductFromFirebase()
         fetchCartItems()
         fetchHomeAddress()
-        fetchCategories()
         fetchFavouriteItems()
         fetchWishItemsFromFirebase()
 
-        observeOffersFromDbOrLocalData()
+        observeLocalOffersFromDb()
+        syncCurrentData()
+        claimActiveToken()
+    }
+
+
+    fun refreshHomeData() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
+            syncCurrentData()
+            delay(500)
+            _uiState.update { it.copy(isRefreshing = false) }
+        }
+    }
+
+    private fun claimActiveToken() {
+        viewModelScope.launch {
+            notificationRepoImpl.claimActiveDeviceToken()
+        }
+    }
+
+    fun syncCurrentData(){
+        viewModelScope.launch {
+            syncBackgroundData()
+        }
+    }
+
+
+    private suspend fun syncBackgroundData() {
+        if (!NetworkUtils.isNetworkAvailable(getApplication())){
+            _uiEvents.send(HomeUiEvents.ShowMessage("Enable Wifi or Mobile Data"))
+        }
+            homeRepoImpl.syncProductsFromNetwork()
+            viewModelScope.launch {
+                homeRepoImpl.syncCategoriesFromNetwork()
+            }
+            viewModelScope.launch {
+                offerRepoImpl.syncOffersFromNetwork()
+            }
     }
 
 
 
 
-    private fun observeOffersFromDbOrLocalData() {
+    private fun observeLocalOffersFromDb() {
         viewModelScope.launch {
             offerRepoImpl.getOffers().collectLatest { result ->
                 if (result is NetworkResult.Success){
@@ -85,8 +122,10 @@ class HomeViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            categoryLocalRepoImpl.getCategories().collectLatest { categories ->
-                _uiState.update { it.copy(localCategories = categories) }
+            homeRepoImpl.getCategoriesFlow().collectLatest { result ->
+                if (result is NetworkResult.Success) {
+                    _uiState.update { it.copy(categoryItems = result.data ?: emptyList()) }
+                }
             }
         }
     }
@@ -94,16 +133,9 @@ class HomeViewModel @Inject constructor(
 
     fun fetchOrderForNotification(orderId: String, productId: String) {
         viewModelScope.launch {
-            _uiState.update {
-                it.copy(
-                    isLoading = true
-                )
-            }
-
-
+            _uiState.update { it.copy(isActionLoading = true) }
             val result = notificationRepoImpl.fetchOrderForNotification(orderId, productId)
 
-            _uiState.update { it.copy(isLoading = false) }
             when (result) {
                 is NetworkResult.Success -> {
                     val order = result.data?.first
@@ -120,6 +152,8 @@ class HomeViewModel @Inject constructor(
                 }
                 else -> {}
             }
+
+            _uiState.update { it.copy(isActionLoading = false) }
         }
     }
 
@@ -235,7 +269,7 @@ class HomeViewModel @Inject constructor(
 
     fun fetchProductFromFirebase() {
         viewModelScope.launch {
-            homeRepoImpl.fetchProductFromFirebase().collectLatest { result ->
+            homeRepoImpl.getProductsFlow().collectLatest { result ->
             when (result) {
                 is NetworkResult.Success -> _uiState.update { it.copy(isLoading = false, products = result.data ?: emptyList()) }
                 is NetworkResult.Error -> {
@@ -254,13 +288,11 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             wishListRepoImpl.getWishListItems().collectLatest { result ->
                 when (result) {
-                    is NetworkResult.Success -> _uiState.update { it.copy(isLoading = false, wishListItems = result.data ?: emptyList()) }
+                    is NetworkResult.Success -> _uiState.update { it.copy( wishListItems = result.data ?: emptyList()) }
                     is NetworkResult.Error -> {
-                        _uiState.update { it.copy(isLoading = false) }
                         _uiEvents.send(HomeUiEvents.ShowMessage(result.message ?: "Failed to fetch products"))
                     }
-                    is NetworkResult.Loading -> _uiState.update { it.copy(isLoading = true) }
-                    else -> _uiState.update { it.copy(isLoading = false) }
+                    else -> {}
                 }
 
             }
@@ -297,11 +329,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun fetchCategories(){
-        viewModelScope.launch {
-            getCategoriesFrom()
-        }
-    }
 
 
     private suspend fun getHomeAddress() {
@@ -314,24 +341,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getCategoriesFrom(){
-        if (NetworkUtils.isNetworkAvailable(getApplication())) {
-            _uiState.update { it.copy(isLoading = true) }
-            val result = homeRepoImpl.getCategoriesFromFirebase()
-            when (result) {
-                is NetworkResult.Success -> {
-                    _uiState.update { it.copy(isLoading = false, categoryItems = result.data ?: emptyList()) }
-                    Log.d("fetchedCategories", result.data.toString())
-                }
-                is NetworkResult.Error -> {
-                    _uiState.update { it.copy(isLoading = false) }
-                    _uiEvents.send(HomeUiEvents.ShowMessage(result.message ?: "Failed to fetch categories"))
-                }
-                else -> _uiState.update { it.copy(isLoading = false) }
-            }
-        } else {
-            _uiEvents.send(HomeUiEvents.ShowMessage("Enable Wifi or Mobile data"))
-        }
-    }
+
 
 }

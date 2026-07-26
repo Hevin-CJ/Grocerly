@@ -7,11 +7,13 @@
     tools:context=".fragments.Home">
 
 
-    <View
+    <androidx.cardview.widget.CardView
         android:id="@+id/viewany"
         android:layout_width="0dp"
         android:layout_height="80dp"
-        android:background="@color/shimmerColor"
+        android:layout_marginTop="8dp"
+        app:cardCornerRadius="16dp"
+        android:backgroundTint="@color/shimmerColor"
         app:layout_constraintEnd_toStartOf="@+id/guideline24"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/guideline23"
@@ -21,7 +23,7 @@
 
 
 
-    </View>
+    </androidx.cardview.widget.CardView>
 
 
     <ScrollView
@@ -38,43 +40,30 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.viewpager2.widget.ViewPager2
+            <androidx.cardview.widget.CardView
                 android:id="@+id/viewpgroffers"
                 android:layout_width="0dp"
                 android:layout_height="200dp"
                 android:layout_marginTop="16dp"
-                android:background="@color/shimmerColor"
+                android:backgroundTint="@color/shimmerColor"
+                app:cardCornerRadius="16dp"
                 app:layout_constraintEnd_toStartOf="@+id/guideline22"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@+id/guideline21"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <LinearLayout
-                android:id="@+id/linearLayout2"
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/shimmerColor"
-                android:gravity="center"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toStartOf="@+id/guideline22"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="@+id/guideline21"
-                app:layout_constraintTop_toBottomOf="@+id/viewpgroffers">
 
-
-            </LinearLayout>
-
-            <View
+            <androidx.cardview.widget.CardView
                 android:id="@+id/rcviewany"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
-                android:layout_marginTop="16dp"
-                android:background="@color/shimmerColor"
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="16dp"
+                android:backgroundTint="@color/shimmerColor"
                 android:nestedScrollingEnabled="false"
                 app:layout_constraintEnd_toStartOf="@+id/guideline22"
                 app:layout_constraintStart_toStartOf="@+id/guideline21"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+                app:layout_constraintTop_toBottomOf="@+id/viewpgroffers" />
 
             <View
                 android:id="@+id/view5"
@@ -87,15 +76,28 @@
 
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardView8"
                 android:layout_width="0dp"
                 android:layout_height="250dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:backgroundTint="@color/shimmerColor"
                 app:cardCornerRadius="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline22"
                 app:layout_constraintStart_toStartOf="@+id/guideline21"
                 app:layout_constraintTop_toBottomOf="@+id/view5">
+
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="250dp"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/shimmerColor"
+                app:cardCornerRadius="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline22"
+                app:layout_constraintStart_toStartOf="@+id/guideline21"
+                app:layout_constraintTop_toBottomOf="@+id/cardView8">
 
             </androidx.cardview.widget.CardView>
 

@@ -11,12 +11,13 @@ import com.example.grocerly.room.entity.CategoryEntity
 import com.example.grocerly.room.entity.OfferEntity
 
 data class HomeUiState (
-    val isLoading: Boolean = false,
+    val isLoading: Boolean = true,
+    val isActionLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val products: List<ParentCategoryItem> = emptyList(),
     val categoryItems: List<Category> = emptyList(),
     val cartItems: List<CartProduct> = emptyList(),
     val homeAddress: String = "",
-    val localCategories: List<CategoryEntity> = emptyList(),
     val localOffers: List<OfferItem> = emptyList(),
     val favouriteItems: List<FavouriteItem> = emptyList(),
     val wishListItems: List<WishItem> = emptyList(),

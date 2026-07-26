@@ -1,5 +1,6 @@
 package com.example.grocerly.Repository.remote
 
+import android.util.Log
 import com.example.grocerly.Repository.local.OfferLocalRepoImpl
 import com.example.grocerly.model.CartProduct
 import com.example.grocerly.model.OfferItem
@@ -24,6 +25,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -32,34 +34,26 @@ import javax.inject.Inject
 class OfferRepoImpl @Inject constructor(private val offerLocalRepoImpl: OfferLocalRepoImpl,private val db: FirebaseFirestore,private val auth: FirebaseAuth) {
 
 
-    fun getOffers(): Flow<NetworkResult<List<OfferItem>>> = flow {
-        try {
-
-            val localEntities = offerLocalRepoImpl.getOffers().first()
-
-            if (localEntities.isNotEmpty()) {
-
+    fun getOffers(): Flow<NetworkResult<List<OfferItem>>> {
+        return offerLocalRepoImpl.getOffers()
+            .map { localEntities ->
                 val localOffers = localEntities.map { it.toOfferItem() }
-                emit(NetworkResult.Success(localOffers))
-            } else {
-
-                emit(NetworkResult.Loading())
+                if (localOffers.isEmpty()) {
+                    NetworkResult.Loading()
+                } else {
+                    NetworkResult.Success(localOffers)
+                }
             }
+    }
 
+
+     suspend fun syncOffersFromNetwork() {
+        try {
             val querySnapshot = db.collectionGroup(OFFERS).get().await()
-
-            val remoteOffers = if (querySnapshot.isEmpty) {
-                listOf(createDummyOffer())
-            } else {
-                querySnapshot.documents.mapNotNull { it.toObject(OfferItem::class.java) }
-            }
-
+            val remoteOffers =   querySnapshot.documents.mapNotNull { it.toObject(OfferItem::class.java) }
             offerLocalRepoImpl.upsertOffer(remoteOffers.toOfferEntityList())
-
-            emit(NetworkResult.Success(remoteOffers))
-
         } catch (e: Exception) {
-            emit(NetworkResult.Error(e.message ?: "Failed to sync latest offers"))
+            Log.e("OfferSync", "Failed to sync latest offers: ${e.message}")
         }
     }
 
@@ -79,7 +73,6 @@ class OfferRepoImpl @Inject constructor(private val offerLocalRepoImpl: OfferLoc
             val cartDeferred = async { cartRef.get().await() }
             val productDeferred = async { partnerRef.get().await() }
 
-            // 2. CHECK CART FIRST: Throw the error instantly before processing the product
             if (cartDeferred.await().exists()) {
                 return@coroutineScope NetworkResult.Error("Already in cart")
             }

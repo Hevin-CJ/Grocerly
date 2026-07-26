@@ -57,4 +57,9 @@ object DatabaseModule {
         return database.pendingOrderDao()
     }
 
+    @Provides
+    @Singleton
+    fun provideProductDao(database: GrocerlyDatabase) = database.productDao()
+
+
 }

@@ -64,7 +64,14 @@ class Coupons : Fragment(R.layout.fragment_coupons) {
                        }
 
                         Log.d("couponlistgot",result.couponList.toString())
-                        couponAdaptor.submitList(result.couponList)
+                        if (result.couponList.isEmpty()) {
+                            binding.txtviewNoCoupons.visibility = View.VISIBLE
+                            binding.rcviewcoupons.visibility = View.GONE
+                        } else {
+                            binding.txtviewNoCoupons.visibility = View.GONE
+                            binding.rcviewcoupons.visibility = View.VISIBLE
+                            couponAdaptor.submitList(result.couponList)
+                        }
 
                     }
 

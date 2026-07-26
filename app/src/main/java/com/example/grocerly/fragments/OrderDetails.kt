@@ -130,7 +130,7 @@ class OrderDetails : Fragment() {
             setTitle("Order Details")
             setNavigationIconTint(ContextCompat.getColor(requireContext(),R.color.black))
             setNavigationOnClickListener {
-                findNavController().popBackStack(R.id.orders,false)
+                findNavController().popBackStack()
             }
         }
     }
