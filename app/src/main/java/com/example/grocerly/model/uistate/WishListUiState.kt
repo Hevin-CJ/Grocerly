@@ -1,6 +1,4 @@
 package com.example.grocerly.model.uistate
-
-import com.example.grocerly.fragments.Cart
 import com.example.grocerly.model.CartProduct
 import com.example.grocerly.model.WishItem
 

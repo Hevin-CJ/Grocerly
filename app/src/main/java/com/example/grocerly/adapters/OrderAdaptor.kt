@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.grocerly.R
 import com.example.grocerly.databinding.OrderitemsRclayoutBinding
-import com.example.grocerly.fragments.Orders
 import com.example.grocerly.interfaces.OrderActionListener
 import com.example.grocerly.model.CartProduct
 import com.example.grocerly.model.Order

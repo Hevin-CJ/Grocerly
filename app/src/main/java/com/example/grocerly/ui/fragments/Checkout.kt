@@ -1,4 +1,4 @@
-package com.example.grocerly.fragments
+package com.example.grocerly.ui.fragments
 
 import android.content.res.ColorStateList
 import android.graphics.Color

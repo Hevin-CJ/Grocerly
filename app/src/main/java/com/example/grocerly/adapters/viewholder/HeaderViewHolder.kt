@@ -2,7 +2,9 @@ package com.example.grocerly.adapters.viewholder
 
 import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
+import coil3.load
+import coil3.request.crossfade
+import coil3.request.error
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.example.grocerly.R

@@ -1,4 +1,4 @@
-package com.example.grocerly.fragments
+package com.example.grocerly.ui.fragments
 
 import android.Manifest
 import android.os.Build

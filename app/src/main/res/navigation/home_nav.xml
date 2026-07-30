@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/home"
-        android:name="com.example.grocerly.fragments.Home"
+        android:name="com.example.grocerly.ui.fragments.Home"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -24,7 +24,7 @@
     </fragment>
     <fragment
         android:id="@+id/cart"
-        android:name="com.example.grocerly.fragments.Cart"
+        android:name="com.example.grocerly.ui.fragments.Cart"
         android:label="fragment_cart"
         tools:layout="@layout/fragment_cart" >
         <action
@@ -38,7 +38,7 @@
     </fragment>
     <fragment
         android:id="@+id/profile"
-        android:name="com.example.grocerly.fragments.Profile"
+        android:name="com.example.grocerly.ui.fragments.Profile"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" >
 
@@ -69,7 +69,7 @@
     </fragment>
     <fragment
         android:id="@+id/menu"
-        android:name="com.example.grocerly.fragments.Menu"
+        android:name="com.example.grocerly.ui.fragments.Menu"
         android:label="fragment_menu"
         tools:layout="@layout/fragment_menu" >
         <action
@@ -81,17 +81,17 @@
     </fragment>
     <fragment
         android:id="@+id/search"
-        android:name="com.example.grocerly.fragments.Search"
+        android:name="com.example.grocerly.ui.fragments.Search"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" />
     <fragment
         android:id="@+id/favourites"
-        android:name="com.example.grocerly.fragments.Favourites"
+        android:name="com.example.grocerly.ui.fragments.Favourites"
         android:label="fragment_favourites"
         tools:layout="@layout/fragment_favourites" />
     <fragment
         android:id="@+id/editProfile"
-        android:name="com.example.grocerly.fragments.EditProfile"
+        android:name="com.example.grocerly.ui.fragments.EditProfile"
         android:label="fragment_edit_profile"
         tools:layout="@layout/fragment_edit_profile" >
         <action
@@ -100,7 +100,7 @@
     </fragment>
     <fragment
         android:id="@+id/savedAddress"
-        android:name="com.example.grocerly.fragments.SavedAddress"
+        android:name="com.example.grocerly.ui.fragments.SavedAddress"
         android:label="fragment_saved_address"
         tools:layout="@layout/fragment_saved_address" >
         <action
@@ -119,7 +119,7 @@
     </fragment>
     <fragment
         android:id="@+id/addAddress"
-        android:name="com.example.grocerly.fragments.AddAddress"
+        android:name="com.example.grocerly.ui.fragments.AddAddress"
         android:label="fragment_add_address"
         tools:layout="@layout/fragment_add_address" >
         <action
@@ -137,7 +137,7 @@
     </fragment>
     <fragment
         android:id="@+id/updateAddress"
-        android:name="com.example.grocerly.fragments.UpdateAddress"
+        android:name="com.example.grocerly.ui.fragments.UpdateAddress"
         android:label="fragment_update_address"
         tools:layout="@layout/fragment_update_address" >
         <action
@@ -158,7 +158,7 @@
     </fragment>
     <fragment
         android:id="@+id/editLanguage"
-        android:name="com.example.grocerly.fragments.EditLanguage"
+        android:name="com.example.grocerly.ui.fragments.EditLanguage"
         android:label="fragment_edit_language"
         tools:layout="@layout/fragment_edit_language" >
 
@@ -168,7 +168,7 @@
     </fragment>
     <fragment
         android:id="@+id/savedCards"
-        android:name="com.example.grocerly.fragments.SavedCards"
+        android:name="com.example.grocerly.ui.fragments.SavedCards"
         android:label="fragment_saved_cards"
         tools:layout="@layout/fragment_saved_cards" >
 
@@ -181,7 +181,7 @@
     </fragment>
     <fragment
         android:id="@+id/upsertCard"
-        android:name="com.example.grocerly.fragments.UpsertCard"
+        android:name="com.example.grocerly.ui.fragments.UpsertCard"
         android:label="fragment_upsert_card"
         tools:layout="@layout/fragment_upsert_card" >
         <action
@@ -201,7 +201,7 @@
     </fragment>
     <fragment
         android:id="@+id/checkout"
-        android:name="com.example.grocerly.fragments.Checkout"
+        android:name="com.example.grocerly.ui.fragments.Checkout"
         android:label="fragment_checkout"
         tools:layout="@layout/fragment_checkout">
 
@@ -225,7 +225,7 @@
     </fragment>
     <fragment
         android:id="@+id/changeAddress"
-        android:name="com.example.grocerly.fragments.ChangeAddress"
+        android:name="com.example.grocerly.ui.fragments.ChangeAddress"
         android:label="fragment_change_address"
         tools:layout="@layout/fragment_change_address" >
         <action
@@ -237,7 +237,7 @@
     </fragment>
     <fragment
         android:id="@+id/payments"
-        android:name="com.example.grocerly.fragments.Payments"
+        android:name="com.example.grocerly.ui.fragments.Payments"
         android:label="fragment_payments"
         tools:layout="@layout/fragment_payments" >
         <action
@@ -253,7 +253,7 @@
     </fragment>
     <fragment
         android:id="@+id/orderPlaced"
-        android:name="com.example.grocerly.fragments.OrderPlaced"
+        android:name="com.example.grocerly.ui.fragments.OrderPlaced"
         android:label="fragment_order_placed"
         tools:layout="@layout/fragment_order_placed" >
         <action
@@ -262,7 +262,7 @@
     </fragment>
     <fragment
         android:id="@+id/orders"
-        android:name="com.example.grocerly.fragments.Orders"
+        android:name="com.example.grocerly.ui.fragments.Orders"
         android:label="fragment_orders"
         tools:layout="@layout/fragment_orders" >
         <action
@@ -277,7 +277,7 @@
     </fragment>
     <fragment
         android:id="@+id/orderDetails"
-        android:name="com.example.grocerly.fragments.OrderDetails"
+        android:name="com.example.grocerly.ui.fragments.OrderDetails"
         android:label="fragment_order_details"
         tools:layout="@layout/fragment_order_details" >
         <action
@@ -292,7 +292,7 @@
     </fragment>
     <fragment
         android:id="@+id/customSearchView"
-        android:name="com.example.grocerly.fragments.CustomSearchView"
+        android:name="com.example.grocerly.ui.fragments.CustomSearchView"
         android:label="fragment_custom_search_view"
         tools:layout="@layout/fragment_custom_search_view" >
         <action
@@ -304,7 +304,7 @@
     </fragment>
     <fragment
         android:id="@+id/helpCenter"
-        android:name="com.example.grocerly.fragments.HelpCenter"
+        android:name="com.example.grocerly.ui.fragments.HelpCenter"
         android:label="fragment_help_center"
         tools:layout="@layout/fragment_help_center" >
         <action
@@ -316,7 +316,7 @@
     </fragment>
     <fragment
         android:id="@+id/wishList"
-        android:name="com.example.grocerly.fragments.WishList"
+        android:name="com.example.grocerly.ui.fragments.WishList"
         android:label="fragment_wish_list"
         tools:layout="@layout/fragment_wish_list" >
         <action
@@ -325,7 +325,7 @@
     </fragment>
     <fragment
         android:id="@+id/coupons"
-        android:name="com.example.grocerly.fragments.Coupons"
+        android:name="com.example.grocerly.ui.fragments.Coupons"
         android:label="fragment_coupons"
         tools:layout="@layout/fragment_coupons" >
         <action

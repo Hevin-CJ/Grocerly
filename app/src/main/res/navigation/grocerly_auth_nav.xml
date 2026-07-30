@@ -2,10 +2,10 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/splash">
+    app:startDestination="@id/login">
     <fragment
         android:id="@+id/login"
-        android:name="com.example.grocerly.fragments.Login"
+        android:name="com.example.grocerly.ui.fragments.Login"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -14,23 +14,11 @@
     </fragment>
     <fragment
         android:id="@+id/signUp"
-        android:name="com.example.grocerly.fragments.SignUp"
+        android:name="com.example.grocerly.ui.fragments.SignUp"
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up" >
         <action
             android:id="@+id/action_signUp_to_login"
             app:destination="@id/login" />
-    </fragment>
-    <fragment
-        android:id="@+id/splash"
-        android:name="com.example.grocerly.fragments.Splash"
-        android:label="splash_screen"
-        tools:layout="@layout/splash_screen" >
-        <action
-            android:id="@+id/action_splash_to_login"
-            app:destination="@id/login" />
-        <action
-            android:id="@+id/action_splash_to_signUp"
-            app:destination="@id/signUp" />
     </fragment>
 </navigation>

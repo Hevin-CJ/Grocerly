@@ -1,4 +1,4 @@
-package com.example.grocerly.fragments
+package com.example.grocerly.ui.fragments
 
 import android.annotation.SuppressLint
 import android.content.Intent

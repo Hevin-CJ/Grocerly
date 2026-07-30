@@ -8,7 +8,9 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.toColorInt
 import androidx.databinding.BindingAdapter
-import coil.load
+import coil3.load
+import coil3.request.crossfade
+import coil3.request.error
 import com.example.grocerly.R
 import com.example.grocerly.utils.QuantityType
 import java.util.Locale

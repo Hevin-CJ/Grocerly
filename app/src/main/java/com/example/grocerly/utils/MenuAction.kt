@@ -1,9 +1,7 @@
 package com.example.grocerly.utils
 
-import com.example.grocerly.fragments.Menu
 import com.example.grocerly.model.CartProduct
 import com.example.grocerly.model.FavouriteItem
-import com.example.grocerly.model.Product
 
 sealed class MenuAction {
     data object SIGN_OUT: MenuAction()

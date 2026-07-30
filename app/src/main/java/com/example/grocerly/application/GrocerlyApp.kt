@@ -3,21 +3,23 @@ package com.example.grocerly.application
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import coil.ImageLoader
-import coil.ImageLoaderFactory
-import coil.disk.DiskCache
-import coil.memory.MemoryCache
+import coil3.ImageLoader
+import coil3.SingletonImageLoader
+import coil3.PlatformContext
+import coil3.disk.DiskCache
+import coil3.memory.MemoryCache
+import coil3.request.crossfade
 import dagger.hilt.android.HiltAndroidApp
+import okio.Path.Companion.toPath
 import javax.inject.Inject
 
 @HiltAndroidApp
-class GrocerlyApp:Application(), Configuration.Provider, ImageLoaderFactory{
+class GrocerlyApp: Application(), Configuration.Provider, SingletonImageLoader.Factory {
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
     override fun onCreate() {
         super.onCreate()
-
     }
 
     override val workManagerConfiguration: Configuration
@@ -25,22 +27,20 @@ class GrocerlyApp:Application(), Configuration.Provider, ImageLoaderFactory{
             .setWorkerFactory(workerFactory)
             .build()
 
-    override fun newImageLoader(): ImageLoader {
-        return ImageLoader.Builder(this)
+    override fun newImageLoader(context: PlatformContext): ImageLoader {
+        return ImageLoader.Builder(context)
             .memoryCache {
-                MemoryCache.Builder(this)
-                    .maxSizePercent(0.25)
+                MemoryCache.Builder()
+                    .maxSizePercent(context, 0.25)
                     .build()
             }
             .diskCache {
                 DiskCache.Builder()
-                    .directory(cacheDir.resolve("image_cache"))
+                    .directory(context.cacheDir.resolve("image_cache").absolutePath.toPath())
                     .maxSizeBytes(100L * 1024 * 1024)
                     .build()
             }
-
-            .respectCacheHeaders(false)
-            .crossfade(200)
+            .crossfade(true)
             .build()
     }
 }

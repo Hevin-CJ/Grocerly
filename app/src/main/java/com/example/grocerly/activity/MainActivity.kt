@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -13,9 +14,10 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.grocerly.R
 import com.example.grocerly.databinding.ActivityMainBinding
-import com.example.grocerly.fragments.Home
-import com.example.grocerly.fragments.Payments
 import com.example.grocerly.preferences.GrocerlyDataStore
+import com.example.grocerly.ui.fragments.Home
+import com.example.grocerly.ui.fragments.Payments
+import com.example.grocerly.ui.navigation.AppNavigation
 import com.example.grocerly.utils.LocaleUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -60,9 +62,20 @@ class MainActivity : AppCompatActivity(), PaymentResultListener {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         navController = navHostFragment.navController
 
+        val isSkipped = intent?.getBooleanExtra("skip_splash", false) ?: false
+        val orderId = intent?.getStringExtra("orderId")
+        val productId = intent?.getStringExtra("productId")
+
+        setContent {
+            AppNavigation(isSkippedSplash = isSkipped,
+                    notificationOrderId = orderId,
+                notificationProductId = productId
+            )
+        }
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.cart, R.id.splash, R.id.login, R.id.signUp, R.id.checkout, R.id.payments, R.id.orderPlaced -> {
+                R.id.cart, R.id.login, R.id.signUp, R.id.checkout, R.id.payments, R.id.orderPlaced -> {
                     setTabLayoutVisibility(false)
                 }
                 else -> {

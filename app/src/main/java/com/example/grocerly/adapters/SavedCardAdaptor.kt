@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.grocerly.SavedCardListener
 import com.example.grocerly.databinding.SavedcardRclayoutBinding
-import com.example.grocerly.fragments.SavedCardsDirections
 import com.example.grocerly.model.Card
 import com.example.grocerly.model.ExpiryDate
 

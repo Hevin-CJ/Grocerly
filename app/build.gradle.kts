@@ -14,6 +14,8 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
+
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 val properties = Properties()
@@ -25,12 +27,12 @@ ksp {
 
 android {
     namespace = "com.example.grocerly"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.grocerly"
         minSdk = 29
-        targetSdk = 35
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
@@ -67,6 +69,7 @@ android {
     buildFeatures{
         viewBinding = true
         dataBinding = true
+        compose = true
     }
 
     kapt {
@@ -77,6 +80,7 @@ android {
 dependencies {
 
 
+    implementation(libs.androidx.foundation.layout)
     //retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
@@ -99,11 +103,7 @@ dependencies {
     implementation(libs.google.firebase.dynamic.links)
     implementation(libs.google.firebase.analytics)
     implementation(libs.firebase.appcheck.playintegrity)
-    implementation(libs.com.google.firebase.firebase.analytics)
     implementation(libs.firebase.messaging)
-
-    //coil
-    implementation(libs.coil.kt.coil)
 
     //livedata
 
@@ -133,19 +133,14 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 
+    implementation(libs.androidx.hilt.navigation.compose)
+
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
     ksp(libs.androidx.hilt.compiler)
 
-    //glide
-    implementation(libs.glide)
-
     //datastore
     implementation(libs.androidx.datastore.preferences)
-
-
-    //lifecycle
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
     //coroutines
     implementation(libs.kotlinx.coroutines.android)
@@ -155,7 +150,9 @@ dependencies {
     implementation(libs.ksp)
 
     //coil
-    implementation(libs.coil)
+    implementation(libs.coil.core)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
     implementation(libs.coil.network.okhttp)
 
     //shimmer
@@ -194,6 +191,23 @@ dependencies {
 
     //gemini api
     implementation(libs.firebase.ai)
+
+
+        // Import the Compose BOM (handles version matching automatically)
+        val composeBom = platform("androidx.compose:compose-bom:2024.09.00")
+        implementation(composeBom)
+        androidTestImplementation(composeBom)
+
+        // Core Compose Libraries (no version numbers needed when using BOM)
+        implementation(libs.androidx.ui)
+        implementation(libs.androidx.ui.graphics)
+        implementation(libs.androidx.ui.tooling.preview)
+        debugImplementation(libs.androidx.ui.tooling)
+        implementation(libs.androidx.material3)
+
+        // Integration with Activities/Lifecycles
+        implementation(libs.androidx.activity.compose)
+        implementation(libs.androidx.lifecycle.runtime.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
