@@ -208,7 +208,7 @@ class CartRepositoryImpl @Inject constructor(
             snapshot.let {
                 val amount = it.documents.mapNotNull { doc -> doc.toObject(CartProduct::class.java) }
                     .sumOf { cartProduct ->
-                        (cartProduct.product.itemOriginalPrice ?: 0) * (cartProduct.quantity ?: 1)
+                        (cartProduct.product.itemOriginalPrice ?: 0) * cartProduct.quantity
                     }
                     .toFloat()
                 trySend(NetworkResult.Success(amount))
@@ -249,11 +249,11 @@ class CartRepositoryImpl @Inject constructor(
             snapshot.let {
                 val amount = it.documents.mapNotNull { doc -> doc.toObject(CartProduct::class.java) }
                     .sumOf { cartProduct ->
-                        (cartProduct.product.itemPrice ?: 0) * (cartProduct.quantity ?: 1)
+                        (cartProduct.product.itemPrice ?: 0) * cartProduct.quantity
                     }
 
                 val discountAmount = amount - cartItems.sumOf {
-                    (it.product.itemOriginalPrice ?: 0) * (it.quantity ?: 1)
+                    (it.product.itemOriginalPrice ?: 0) * it.quantity
                 }
 
                 val platformFee = (amount * 0.01f).roundToInt()

@@ -154,7 +154,7 @@ class WishListViewModel @Inject constructor(application: Application
                         )
                     }
 
-                    uiEvents_.send(ShowMessage(result.message.toString() ?: "Unknown Error Occurred"))
+                    uiEvents_.send(ShowMessage(result.message ?: "Unknown Error Occurred"))
                 }
                 is NetworkResult.Loading<*> -> {
                     uiState_.update {

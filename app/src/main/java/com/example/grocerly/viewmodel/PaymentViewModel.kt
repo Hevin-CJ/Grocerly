@@ -95,7 +95,7 @@ class PaymentViewModel @Inject constructor(
                 put("image", "http://example.com/image/rzp.jpg")
                 put("theme.color", "#0CA201")
                 put("currency", "INR")
-                put("amount", (order.totalOrderPrice * 100).toInt())
+                put("amount", order.totalOrderPrice * 100)
                 put("retry", JSONObject().apply {
                     put("enabled", true)
                     put("max_count", 4)

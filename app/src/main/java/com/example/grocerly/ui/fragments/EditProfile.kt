@@ -383,7 +383,7 @@ class EditProfile : Fragment() {
 
                 val updatedAccount = Account(account.userId,firstname,lastname,email,imageUrl,countryCode,phoneNo)
 
-                Log.d("btnclicked",updatedAccount.phoneNumber.toString())
+                Log.d("btnclicked",updatedAccount.phoneNumber)
                 profileViewModel.updateUserDetailsToFirebase(updatedAccount)
             }
         }

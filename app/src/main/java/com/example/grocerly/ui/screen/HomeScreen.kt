@@ -2,11 +2,13 @@ package com.example.grocerly.ui.screen
 
 import android.Manifest
 import android.os.Build
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,6 +16,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -23,23 +26,25 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -53,17 +58,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.core.graphics.toColorInt
 import coil3.compose.AsyncImage
 import com.example.grocerly.R
 import com.example.grocerly.model.Address
@@ -77,6 +85,7 @@ import com.example.grocerly.model.Product
 import com.example.grocerly.model.WishItem
 import com.example.grocerly.model.uievents.HomeUiEvents
 import com.example.grocerly.utils.ProductCategory
+import com.example.grocerly.utils.QuantityType
 import com.example.grocerly.viewmodel.HomeViewModel
 import kotlinx.coroutines.delay
 import kotlin.collections.emptyList
@@ -99,7 +108,7 @@ fun HomeScreen(
     val context = LocalContext.current
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
-    var showAddressSheet by remember { mutableStateOf(false) }
+    var showAddressSheet by remember { mutableStateOf(value = false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestMultiplePermissions()) {}
 
@@ -154,13 +163,13 @@ fun HomeScreen(
                     onAddressClick = { showAddressSheet = true },
                     onCartClick = { onNavigateToCart() },
                     onSeeAllClick = {onNavigateToSeeAll(ProductCategory.selectcatgory) },
-                    onCategoryClick = { onNavigateToCategory(uiState.products.get(0))},
+                    onCategoryClick = { onNavigateToCategory(uiState.products[0])},
                     onAddOfferToCart = {productId,partnerId ->
                         homeViewModel.addOfferToCart(productId,partnerId)
                     },
                     onAddToCart = {homeViewModel.addProductToCart(it)},
                     onAddToFav = {homeViewModel.addProductToFavourites(it)},
-                    onAddToWishlist = {homeViewModel.addProductToWishlist(it)}
+                    onAddToWishlist = { homeViewModel.addProductToWishlist(it) }
                 )
             }
         }
@@ -200,6 +209,7 @@ private fun HomeContent(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color.White)
             .padding(horizontal = 10.dp), // Mirrors guideline21 (10dp) and guideline22 (10dp)
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -263,7 +273,6 @@ private fun HomeContent(
                     }
                 }
 
-                // Replaces @id/view6 (1dp Divider)
                 HorizontalDivider(
                     modifier = Modifier.padding(top = 8.dp),
                     thickness = 1.dp,
@@ -272,7 +281,7 @@ private fun HomeContent(
             }
         }
 
-        // --- 4. Nested Product Feed (@id/nestedrcview) ---
+
         items(parentCategories) { parentCategory ->
             ParentCategorySection(
                 parentCategory = parentCategory,
@@ -291,11 +300,11 @@ fun AddressToolbar(
 
     Row(modifier = Modifier.fillMaxWidth().background(Color.White).padding(vertical = 8.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
 
-        Row(modifier = Modifier.weight(1f,fill = false).background(color = Color.White).clickable(interactionSource = remember{ MutableInteractionSource()}, indication = null){ onAddressClick()}, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        Row(modifier = Modifier.background(color = Color.White).fillMaxWidth(0.7f).clickable(interactionSource = remember{ MutableInteractionSource()}, indication = null){ onAddressClick()}, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             Image(painter = painterResource(id = R.drawable.scooter), contentDescription = null, modifier = Modifier.size(40.dp).align(Alignment.CenterVertically))
 
             Text(text = addressText.ifEmpty { "Select Address" },
-                modifier = Modifier.padding(start = 2.dp),
+                modifier = Modifier.weight(1f, fill = false).padding(start = 2.dp),
                 textAlign = TextAlign.Center, fontSize = 20.sp,
                 fontWeight = FontWeight.Bold, maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -342,12 +351,22 @@ private fun ParentCategorySection(
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        Text(
-            text = parentCategory.categoryName ?: "Products",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
+        Row( modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp), horizontalArrangement = Arrangement.SpaceBetween , verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = parentCategory.categoryName,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(
+                text = "See all",
+                color = Color(0xFF2E7D32),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+            )
+        }
 
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -356,58 +375,146 @@ private fun ParentCategorySection(
                 Card(
                     modifier = Modifier
                         .width(150.dp)
-                        .padding(vertical = 4.dp),
-                    shape = RoundedCornerShape(8.dp)
+                        .wrapContentHeight()
+                        .padding(vertical = 4.dp)
+
+                    ,
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    shape = RoundedCornerShape(8.dp),
+                    border = BorderStroke(1.dp, Color(0xFF4D4D4D))
                 ) {
                     Column(
-                        modifier = Modifier.padding(8.dp),
+                        modifier = Modifier.fillMaxSize().padding(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        AsyncImage(
-                            model = childProduct.image,
-                            contentDescription = childProduct.itemName,
-                            modifier = Modifier
-                                .size(90.dp)
-                                .clip(RoundedCornerShape(8.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-                        Spacer(modifier = Modifier.height(6.dp))
+                       Card( modifier = Modifier.width(110.dp).height(100.dp)
+                           , shape = RoundedCornerShape(8.dp)
+                       ) {
+                           AsyncImage(
+                               modifier = Modifier.fillMaxSize(),
+                               model = childProduct.image,
+                               contentDescription = childProduct.itemName,
+                               contentScale = ContentScale.Crop
+                           )
+                       }
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
                         Text(
-                            text = childProduct.itemName ?: "",
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold,
+                            text = childProduct.itemName,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+
+                            Image(
+                                modifier = Modifier.size(15.dp),
+                                painter = painterResource(id = R.drawable.star),
+                                contentDescription = "Product Rating"
+                            )
+
+                            Text(
+                                modifier = Modifier.padding(start = 4.dp, top = 2.dp),
+                                text = "${childProduct.itemRating.toString()} (${childProduct.totalRating.toString()})",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "₹${childProduct.itemPrice ?: 0}",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Text(
+                                text = convertQuantityIntoString(childProduct.quantityType),
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Text(
+                                modifier = Modifier.padding(start = 6.dp),
+                                text = "₹${childProduct.itemOriginalPrice ?: 0}",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Gray,
+                                maxLines = 1 ,
+                                overflow = TextOverflow.Ellipsis,
+                                textDecoration = TextDecoration.LineThrough
+                            )
+
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = "₹${childProduct.itemPrice}",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                            Card(colors = CardDefaults.cardColors(Color(0xFFF3F3F3))) {
+                                Row(
+                                    modifier = Modifier.padding(3.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    IconButton(
+                                        onClick = {
+                                            onAddToCart(CartProduct(product = childProduct, quantity = 1))
+                                        },
+                                        modifier = Modifier.size(28.dp)
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.favourites),
+                                            contentDescription = "Add to Cart",
+                                            modifier = Modifier.size(18.dp),
+                                            tint  = if (childProduct.isFavourite) Color.Red else Color.Gray
+                                        )
+                                    }
+
+                                    Spacer(modifier = Modifier.width(6.dp))
+
+                                    IconButton(
+                                        onClick = {
+                                            onAddToCart(CartProduct(product = childProduct, quantity = 1))
+                                        },
+                                        modifier = Modifier.size(28.dp)
+                                    ) {
+                                        Icon(
+                                            painter = if(childProduct.isFavourite) painterResource(id = R.drawable.wishlist) else painterResource(id = R.drawable.wishlist_done),
+                                            contentDescription = "Add to Cart",
+                                            modifier = Modifier.size(18.dp),
+                                            tint = Color.Unspecified
+                                        )
+                                    }
+                                }
+                            }
+
+
                             IconButton(
                                 onClick = {
-                                    onAddToCart(
-                                        CartProduct(
-                                            product = childProduct,
-                                            quantity = 1
-                                        )
-                                    )
+                                    onAddToCart(CartProduct(product = childProduct, quantity = 1))
                                 },
                                 modifier = Modifier.size(28.dp)
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.ShoppingCart,
+                                    painter = if (childProduct.isInCart) painterResource(R.drawable.checkcircleadded) else painterResource(R.drawable.carthome) ,
                                     contentDescription = "Add to Cart",
-                                    modifier = Modifier.size(18.dp)
+                                    modifier = Modifier.size(20.dp),
+                                    tint = Color.Unspecified
                                 )
                             }
                         }
+
                     }
                 }
             }
@@ -417,61 +524,135 @@ private fun ParentCategorySection(
 
 @Composable
 fun OfferAutoScrollBanner(
-    offers:List<OfferItem>,
-    onAddOfferToCartClick:(String,String) -> Unit
-){
+    offers: List<OfferItem>,
+    onAddOfferToCartClick: (String, String) -> Unit
+) {
     val listState = rememberLazyListState()
-
     val activeIndex = remember { derivedStateOf { listState.firstVisibleItemIndex } }
 
     LaunchedEffect(offers) {
         if (offers.size > 1) {
             while (true) {
                 delay(3000L)
-
                 if (!listState.isScrollInProgress) {
                     val nextItem = (listState.firstVisibleItemIndex + 1) % offers.size
                     listState.animateScrollToItem(nextItem)
                 }
             }
         }
-
     }
 
-    Column(){
+    Column {
         LazyRow(
             state = listState,
-            modifier = Modifier.fillMaxWidth().height(200.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .background(Color.White),
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            items(offers){offer ->
+            items(offers) { offer ->
+                val offerBgColor = remember(offer.offerBgColor) {
+                    try {
+                        Color(offer.offerBgColor.toColorInt())
+                    } catch (e: Exception) {
+                        Color.White
+                    }
+                }
+                val btnBgColor = remember(offer.buttonBgColor) {
+                    try {
+                        Color(offer.buttonBgColor.toColorInt())
+                    } catch (e: Exception) {
+                        Color(0xFF4CAF50)
+                    }
+                }
+                val btnTxtColor = remember(offer.buttonTxtColor) {
+                    try {
+                        Color(offer.buttonTxtColor.toColorInt())
+                    } catch (e: Exception) {
+                        Color.White
+                    }
+                }
+                val descTextColor = remember(offer.descriptionTextColor) {
+                    try {
+                        Color(offer.descriptionTextColor.toColorInt())
+                    } catch (e: Exception) {
+                        Color.Black
+                    }
+                }
+
                 Card(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .width(320.dp)
+                        .width(350.dp)
                         .clickable {
-                            val productId = offer.productId ?: ""
-                            val partnerId = offer.partnerId ?: ""
+                            val productId = offer.productId
+                            val partnerId = offer.partnerId
                             onAddOfferToCartClick(productId, partnerId)
                         },
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = offerBgColor)
                 ) {
-                    AsyncImage(
-                        model = offer.offerImage,
-                        contentDescription = "Offer Banner",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
+                    Row(modifier = Modifier.fillMaxSize()) {
+                        AsyncImage(
+                            modifier = Modifier
+                                .weight(1.1f)
+                                .fillMaxSize(),
+                            model = offer.offerImage,
+                            contentDescription = "Offer Banner",
+                            contentScale = ContentScale.FillBounds
+                        )
+                        Column(
+                            modifier = Modifier
+                                .weight(.9f)
+                                .fillMaxHeight()
+                                .padding(12.dp),
+                            verticalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = offer.descriptionText,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = descTextColor,
+                                maxLines = 3,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f)
+                            )
+
+                            Button(
+                                onClick = {
+                                    onAddOfferToCartClick(offer.productId, offer.partnerId)
+                                },
+                                colors = buttonColors(
+                                    containerColor = btnBgColor,
+                                    contentColor = btnTxtColor
+                                ),
+                                shape = RoundedCornerShape(8.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = offer.buttonText.ifEmpty { "Shop Now" },
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        }
+                    }
                 }
             }
-
         }
 
-        if (offers.size>1){
-            PageIndicator(offers.size,activeIndex.value, modifier = Modifier.padding(top = 8.dp))
+        if (offers.size > 1) {
+            PageIndicator(
+                pageCount = offers.size,
+                currentPage = activeIndex.value,
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally)
+            )
         }
     }
-
 }
 
 @Composable
@@ -482,7 +663,7 @@ private fun PageIndicator(
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp, alignment = Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically
     ) {
         repeat(pageCount) { index ->
@@ -546,17 +727,19 @@ private fun CategoryItemCell(category: Category) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(horizontal = 4.dp)
     ) {
-        AsyncImage(
-            model = category.imageUrl,
-            contentDescription = category.categoryTitleForFirebase,
-            modifier = Modifier
-                .size(60.dp)
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop
-        )
+        Card(  modifier = Modifier
+            .size(60.dp)
+            .clip(RoundedCornerShape(8.dp))) {
+
+            AsyncImage(
+                model = category.imageUrl,
+                contentDescription = category.categoryTitleForFirebase,
+                contentScale = ContentScale.FillBounds
+            )
+        }
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = category.categoryTitleForFirebase ?: "",
+            text = category.categoryTitleForFirebase,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
             maxLines = 1,
@@ -565,10 +748,83 @@ private fun CategoryItemCell(category: Category) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ShowHomePreview(){
-    AddressToolbar("Ramnagar,Kollam",5,{},{})
+fun convertQuantityIntoString(quantityType: QuantityType): String{
+   return when(quantityType){
+        QuantityType.selectQuantity -> "/ Quantity"
+        QuantityType.perKilogram -> "/ Kg"
+        QuantityType.perLiter -> "/ L"
+        QuantityType.perPiece -> "/ Piece"
+        QuantityType.perPacket -> "/ Packet"
+    }
+
 }
+
+
+@Preview(showBackground = true, name = "Home Screen - Content Loaded")
+@Composable
+fun HomeScreenPreview() {
+    // Mock Data for Previewing UI
+    val mockOffers = listOf(
+        OfferItem(
+            productId = "1",
+            partnerId = "p1",
+            offerImage = "",
+            descriptionText = "Get 50% Off on Fresh Fruits!",
+            descriptionTextColor = "#000000",
+            buttonText = "Shop Now",
+            buttonBgColor = "#4CAF50",
+            buttonTxtColor = "#FFFFFF",
+            offerBgColor = "#E8F5E9"
+        ),
+        OfferItem(
+            productId = "2",
+            partnerId = "p2",
+            offerImage = "",
+            descriptionText = "Free Delivery on Orders above ₹500",
+            descriptionTextColor = "#000000",
+            buttonText = "Order Now",
+            buttonBgColor = "#2E7D32",
+            buttonTxtColor = "#FFFFFF",
+            offerBgColor = "#C8E6C9"
+        )
+    )
+
+    val mockCategories = listOf(
+        Category(id = 1, imageUrl = "").apply { category = ProductCategory.FruitsandVegies },
+        Category(id = 2, imageUrl = "").apply { category = ProductCategory.FrozenFoods },
+        Category(id = 3, imageUrl = "").apply { category = ProductCategory.BreadandBakery },
+        Category(id = 4, imageUrl = "").apply { category = ProductCategory.HealthCare }
+    )
+
+    val mockChildProducts = listOf(
+        Product(itemName = "Fresh Tomato", itemPrice = 40000, image = ""),
+        Product(itemName = "Organic Potato", itemPrice = 30, image = ""),
+        Product(itemName = "Green Capsicum", itemPrice = 50, image = "")
+    )
+
+    val mockParentCategories = listOf(
+        ParentCategoryItem(categoryName = "Daily Essentials", childCategoryItems = mockChildProducts),
+        ParentCategoryItem(categoryName = "Fresh Produce", childCategoryItems = mockChildProducts)
+    )
+
+    MaterialTheme {
+        HomeContent(
+            addressText = "61 Hooper Street, Ramnagar",
+            cartBadgeCount = 3,
+            localOffers = mockOffers,
+            categories = mockCategories,
+            parentCategories = mockParentCategories,
+            onAddressClick = {},
+            onCartClick = {},
+            onSeeAllClick = {},
+            onCategoryClick = {},
+            onAddOfferToCart = { _, _ -> },
+            onAddToCart = {},
+            onAddToFav = {},
+            onAddToWishlist = {}
+        )
+    }
+}
+
 
 

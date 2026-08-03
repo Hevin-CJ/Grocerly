@@ -49,7 +49,7 @@ class HomeRepoImpl @Inject constructor(private val auth: FirebaseAuth,private va
                 val groupedProducts = products.groupBy { it.category }
                 val categories = groupedProducts.map { (category, prods) ->
                     ParentCategoryItem(
-                        categoryName = category.name,
+                        categoryName = category.displayName,
                         childCategoryItems = prods.toDomainModelList()
                     )
                 }.sortedBy { it.categoryName }

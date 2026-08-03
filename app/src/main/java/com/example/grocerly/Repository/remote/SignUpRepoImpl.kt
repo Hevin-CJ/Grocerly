@@ -39,7 +39,7 @@ class SignUpRepoImpl @Inject constructor(private val db: FirebaseFirestore,priva
     private suspend fun saveUserDetailsToFirebase(account: Account): Boolean {
         return try {
 
-            val userId = auth.currentUser?.uid.toString() ?: return false
+            val userId = auth.currentUser?.uid ?: return false
             val updatedProfile = account.copy(userId = userId)
 
             db.collection(ACCOUNTS)

@@ -14,7 +14,7 @@ import com.example.grocerly.model.Card
             binding.cardDetailsLayout.visibility = View.VISIBLE
             binding.addcardbtn.visibility = View.GONE
 
-            val last4No = card.cardNumber.takeLast(4).toString()
+            val last4No = card.cardNumber.takeLast(4)
             txtviewcardNoblured.text = "XXXX $last4No"
 
             txtviewdatecard.text = buildString {

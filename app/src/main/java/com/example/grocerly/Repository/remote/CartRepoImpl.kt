@@ -238,7 +238,7 @@ class CartRepoImpl @Inject constructor(private val db: FirebaseFirestore, privat
             snapshot.let {
                 val amount = it.documents.mapNotNull { doc -> doc.toObject(CartProduct::class.java) }
                         .sumOf { cartProduct ->
-                            (cartProduct.product.itemOriginalPrice ?: 0) * (cartProduct.quantity ?: 1)
+                            (cartProduct.product.itemOriginalPrice ?: 0) * cartProduct.quantity
                         }
                         .toFloat()
 
@@ -286,10 +286,10 @@ class CartRepoImpl @Inject constructor(private val db: FirebaseFirestore, privat
             snapshot.let {
                 val amount = it.documents.mapNotNull { doc -> doc.toObject(CartProduct::class.java) }
                         .sumOf { cartProduct ->
-                            (cartProduct.product.itemPrice ?: 0) * (cartProduct.quantity ?: 1)
+                            (cartProduct.product.itemPrice ?: 0) * cartProduct.quantity
                         }
 
-                val discountAmount =  amount - cartItems.sumOf { (it.product.itemOriginalPrice ?: 0) * (it.quantity ?: 1) }
+                val discountAmount =  amount - cartItems.sumOf { item -> (item.product.itemOriginalPrice ?: 0) * item.quantity }
 
                 val platformFee = (amount * 0.01f).roundToInt()
                 val deliveryFee = calculateDeliveryCharge(amount)

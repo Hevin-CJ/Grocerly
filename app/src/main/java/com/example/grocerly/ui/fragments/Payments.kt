@@ -175,7 +175,7 @@ class Payments : Fragment(), PaymentResultListener {
             }
 
             override fun onAddCardClicked() {
-                val action = PaymentsDirections.actionPaymentsToUpsertCard(null, false)
+                val action = PaymentsDirections.actionPaymentsToUpsertCard(savedCard = null, isUpdate = false)
                 findNavController().navigate(action)
             }
         })

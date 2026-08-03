@@ -194,7 +194,8 @@
         <argument
             android:name="savedCard"
             app:argType="com.example.grocerly.model.Card"
-            app:nullable="true" />
+            app:nullable="true"
+            android:defaultValue="@null" />
         <action
             android:id="@+id/action_upsertCard_to_payments"
             app:destination="@id/payments" />

@@ -7,9 +7,8 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     id("androidx.navigation.safeargs.kotlin")
-    id("kotlin-kapt")
+    alias(libs.plugins.legacy.kapt)
     alias(libs.plugins.google.gms.google.services)
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
@@ -70,6 +69,7 @@ android {
         viewBinding = true
         dataBinding = true
         compose = true
+        resValues = true
     }
 
     kapt {
@@ -81,6 +81,7 @@ dependencies {
 
 
     implementation(libs.androidx.foundation.layout)
+    implementation(libs.material3)
     //retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)

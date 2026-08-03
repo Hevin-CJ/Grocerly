@@ -244,7 +244,7 @@ class UpsertCard : Fragment() {
     private fun setDrawableForCardType() {
         binding.apply {
             val cardNumber = inputCardNumber.editText?.text.toString().trim()
-            Log.d("cardNumber",cardNumber.toString())
+            Log.d("cardNumber",cardNumber)
             val cleanedNo = cardNumber.replace("\\s".toRegex(),"")
 
            val drawableRes =  when {

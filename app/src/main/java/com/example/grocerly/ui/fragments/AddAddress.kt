@@ -294,7 +294,7 @@ class AddAddress : Fragment() {
                     val address = edttxtfulladdress.text.toString().trim()
                     val landMark = edttxtlandmark.text.toString().trim()
                     val addressType = getAddressType(buttongroup.checkedButtonId)
-                    Log.d("addressTypegot",addressType.toString())
+                    Log.d("addressTypegot",addressType)
 
                     val getAddress = Address("",firstName,phoneNo,alternateNo,state,city,address,landMark,pinCode,addressType)
                     saveAddressViewModel.insertAddressIntoDb(getAddress)

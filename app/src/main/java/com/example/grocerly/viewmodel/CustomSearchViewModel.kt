@@ -88,6 +88,7 @@ class CustomSearchViewModel @Inject constructor(private val customSearchRepoImpl
     }
 
 
+    @OptIn(FlowPreview::class)
     fun searchItemsInFirebase(query: String) {
         viewModelScope.launch {
             searchRepoImpl.searchProduct(query).debounce(400L).distinctUntilChanged().collectLatest { result ->

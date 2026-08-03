@@ -67,7 +67,7 @@ class Menu : Fragment() {
                         menuSideAdaptor.updateData(it.data ?: emptyList())
 
                         if (it.message != null){
-                            Toast.makeText(requireContext(), it.message.toString(), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }

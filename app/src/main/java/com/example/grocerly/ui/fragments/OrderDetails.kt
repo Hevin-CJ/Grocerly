@@ -232,7 +232,7 @@ class OrderDetails : Fragment() {
                 stageStepBar.setFilledTrackToNormalShape(ContextCompat.getColor(requireContext(), R.color.red))
 
                 cancelButton.visibility =  if ( cartProduct.cancellationInfo.cancellationStatus == CancellationStatus.Cancelled) View.GONE else View.VISIBLE
-                txtviewdeliveryupdate.text = "The Item has been cancelled by ${cartProduct.cancellationInfo?.cancelledBy?.displayName} because \n ${cartProduct.cancellationInfo.reason}"
+                txtviewdeliveryupdate.text = "The Item has been cancelled by ${cartProduct.cancellationInfo.cancelledBy.displayName} because \n ${cartProduct.cancellationInfo.reason}"
             }
             return
         }

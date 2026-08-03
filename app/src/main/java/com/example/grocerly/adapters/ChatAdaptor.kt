@@ -65,13 +65,13 @@
                             txtviewuser.text = message.message
                         }
                         "model" -> {
-                            if (message.message.isBlank() || message.message.isNullOrEmpty()){
-                                Log.d("chatadaptor",message.message.toString())
+                            if (message.message.isBlank()){
+                                Log.d("chatadaptor",message.message)
 
                                 gifImageViewloading.visibility = View.VISIBLE
                                 materialcardviewmodel.visibility = View.GONE
                             } else {
-                                Log.d("chatadaptor",message.message.toString())
+                                Log.d("chatadaptor",message.message)
 
                                 materialcardviewmodel.visibility = View.VISIBLE
                                 gifImageViewloading.visibility = View.GONE

@@ -4,6 +4,7 @@ import android.os.Parcelable
 import com.example.grocerly.utils.ProductCategory
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -20,6 +21,7 @@ data class Category(
 ): Parcelable{
     @get:Exclude
     @set:Exclude
+    @IgnoredOnParcel
     var category: ProductCategory = ProductCategory.selectcatgory
 
     @get:PropertyName("title")
