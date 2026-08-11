@@ -3,12 +3,11 @@ package com.example.grocerly.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.grocerly.Repository.remote.CartRepoImpl
 import com.example.grocerly.Repository.remote.PaymentRepoImpl
 import com.example.grocerly.Repository.remote.SavedCardsRepoImpl
 import com.example.grocerly.model.Card
 import com.example.grocerly.model.Order
-import com.example.grocerly.model.uievents.PaymentUiEvent
+import com.example.grocerly.ui.uievents.PaymentUiEvent
 import com.example.grocerly.utils.NetworkResult
 import com.example.grocerly.utils.NetworkUtils
 import com.example.grocerly.utils.PaymentMethodItem

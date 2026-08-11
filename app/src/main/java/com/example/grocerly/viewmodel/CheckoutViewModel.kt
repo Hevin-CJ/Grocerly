@@ -1,7 +1,6 @@
 package com.example.grocerly.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.grocerly.Repository.remote.CartRepoImpl
@@ -10,8 +9,8 @@ import com.example.grocerly.Repository.remote.SavedAddressRepoImpl
 import com.example.grocerly.model.Address
 import com.example.grocerly.model.CartProduct
 import com.example.grocerly.model.EarnedCoupon
-import com.example.grocerly.model.uievents.CheckoutUiEvent
-import com.example.grocerly.model.uistate.CheckoutUiState
+import com.example.grocerly.ui.uievents.CheckoutUiEvent
+import com.example.grocerly.ui.uistate.CheckoutUiState
 import com.example.grocerly.utils.NetworkResult
 import com.example.grocerly.utils.NetworkUtils
 import dagger.hilt.android.lifecycle.HiltViewModel

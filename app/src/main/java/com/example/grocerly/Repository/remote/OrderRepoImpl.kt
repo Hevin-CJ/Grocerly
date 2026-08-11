@@ -232,7 +232,7 @@ import javax.inject.Inject
             "deliveredDate" to deliveredDate,
             "orderStatus" to  orderStatus,
             "cancellationInfo" to cancellationInfo.toMap(),
-            "isRewardClaimed" to isRewardClaimed
+            "rewardClaimed" to isRewardClaimed
         )
     }
 

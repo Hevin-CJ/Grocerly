@@ -10,8 +10,8 @@ import com.example.grocerly.model.LocationInfo
 import com.example.grocerly.utils.Constants.ADDRESS
 import com.example.grocerly.utils.Constants.USERS
 import com.example.grocerly.utils.NetworkResult
-import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -171,8 +171,8 @@ class SavedAddressRepoImpl @Inject constructor(private val auth: FirebaseAuth,pr
     @SuppressLint("MissingPermission")
     suspend fun getCurrentLocationForClient(context:Context): NetworkResult<LocationInfo>{
        return try {
-           val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-           val location = fusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token).await()
+           val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context.applicationContext)
+           val location = fusedLocationClient.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, CancellationTokenSource().token).await()
 
            if (location==null){
                return NetworkResult.Error("Unable to retrieve location")

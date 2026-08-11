@@ -38,10 +38,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.example.grocerly.R
 import com.example.grocerly.model.CartProduct
 import com.example.grocerly.model.FavouriteItem
+import com.example.grocerly.ui.uievents.FavouriteUiEvents
 import com.example.grocerly.utils.NetworkResult
 import com.example.grocerly.viewmodel.CartViewModel
 import com.example.grocerly.viewmodel.FavouriteViewModel
@@ -53,18 +55,14 @@ fun FavouritesScreen(
     cartViewModel: CartViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val favouritesState by favouriteViewModel.favouritesList.collectAsState(initial = NetworkResult.UnSpecified())
+
+    val uiState by favouriteViewModel.uiState.collectAsStateWithLifecycle()
+
 
     LaunchedEffect(Unit) {
-        favouriteViewModel.getAllFavouritesFromFirebase()
-    }
-
-    LaunchedEffect(Unit) {
-        favouriteViewModel.deletedFavourite.collectLatest { result ->
-            if (result is NetworkResult.Error) {
+        favouriteViewModel.uiEvents.collectLatest { result ->
+            if (result is FavouriteUiEvents.ShowMessage) {
                 Toast.makeText(context, result.message, Toast.LENGTH_SHORT).show()
-            } else if (result is NetworkResult.Success) {
-                Toast.makeText(context, "Removed from favourites", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -82,36 +80,37 @@ fun FavouritesScreen(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        when (val result = favouritesState) {
-            is NetworkResult.Loading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = Color(0xFF2E7D32))
-                }
+    }
+
+    if (uiState.isLoading && uiState.favouriteItems.isEmpty()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator(color = Color(0xFF2E7D32))
+        }
+    } else if (uiState.favouriteItems.isEmpty()) {
+        EmptyFavouritesContent()
+    } else {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(uiState.favouriteItems) { item ->
+                FavouriteItemRow(
+                    item = item,
+                    onDeleteClick = { favouriteViewModel.deleteFavouriteFromFirebase(item) },
+                    onAddToCartClick = { cartViewModel.addProductIntoCartFirebase(CartProduct(item.product, 1)) }
+                )
             }
-            is NetworkResult.Success -> {
-                val favourites = result.data ?: emptyList()
-                if (favourites.isEmpty()) {
-                    EmptyFavouritesContent()
-                } else {
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(favourites) { item ->
-                            FavouriteItemRow(
-                                item = item,
-                                onDeleteClick = { favouriteViewModel.deleteFavouriteFromFirebase(item) },
-                                onAddToCartClick = { cartViewModel.addProductIntoCartFirebase(CartProduct(item.product, 1)) }
-                            )
-                        }
-                    }
-                }
-            }
-            is NetworkResult.Error -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = result.message ?: "An error occurred", color = Color.Red)
-                }
-            }
-            else -> {}
+        }
+    }
+
+
+    if (uiState.isActionLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.3f)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = Color(0xFF2E7D32))
         }
     }
 }
@@ -139,7 +138,7 @@ fun FavouriteItemRow(
                 modifier = Modifier
                     .size(80.dp)
                     .background(Color.White, RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Fit
+                contentScale = ContentScale.Crop
             )
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -192,7 +191,7 @@ fun EmptyFavouritesContent() {
         Image(
             painter = painterResource(id = R.drawable.favourites),
             contentDescription = "No Favourites",
-            modifier = Modifier.size(120.dp),
+            modifier = Modifier.size(100.dp),
             alpha = 0.5f
         )
         Spacer(modifier = Modifier.height(16.dp))

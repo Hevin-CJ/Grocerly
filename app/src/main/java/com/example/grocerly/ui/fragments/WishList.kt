@@ -1,11 +1,8 @@
 package com.example.grocerly.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -13,19 +10,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.grocerly.R
-import com.example.grocerly.activity.MainActivity
 import com.example.grocerly.adapters.WishListAdaptor
 import com.example.grocerly.databinding.FragmentWishListBinding
-import com.example.grocerly.model.uievents.WishListUiEvents
+import com.example.grocerly.ui.uievents.WishListUiEvents
 import com.example.grocerly.utils.GridSpacingItemDecoration
 import com.example.grocerly.utils.LoadingDialogue
-import com.example.grocerly.utils.Mappers
 import com.example.grocerly.utils.Mappers.calculateDynamicSpanCount
 import com.example.grocerly.utils.WishListAction
 import com.example.grocerly.viewmodel.WishListViewModel
-import com.loukwn.stagestepbar.StageStepBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -43,8 +36,6 @@ class WishList : Fragment(R.layout.fragment_wish_list) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         wishList = FragmentWishListBinding.bind(view)
-
-        (requireActivity() as MainActivity).setTabLayoutVisibility(false)
 
         loadingDialogue = LoadingDialogue(requireContext())
 

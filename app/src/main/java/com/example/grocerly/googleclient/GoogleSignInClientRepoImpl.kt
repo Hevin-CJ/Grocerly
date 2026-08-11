@@ -23,7 +23,7 @@ class GoogleSignInClientRepoImpl  @Inject constructor (private val context: Cont
 
     private val  googleTag = "google_sign_client"
 
-    private val credentialManager = CredentialManager.create(context)
+    private val credentialManager by lazy { CredentialManager.create(context) }
 
     fun isSignedIn(): Boolean{
         if (auth.currentUser != null) {
@@ -73,19 +73,31 @@ class GoogleSignInClientRepoImpl  @Inject constructor (private val context: Cont
         }
     }
 
-    private suspend fun buildCredentialRequest(): GetCredentialResponse{
-        val serverClientId = context.getString(R.string.google_server_client_id)
+    private suspend fun buildCredentialRequest(): GetCredentialResponse {
+        try {
+            val serverClientId = context.getString(R.string.google_server_client_id)
 
-        val request = GetCredentialRequest.Builder()
-            .addCredentialOption(GetGoogleIdOption.Builder().setFilterByAuthorizedAccounts(false).setServerClientId(serverClientId).setAutoSelectEnabled(false).build())
-            .build()
-        return CredentialManager.create(context).getCredential(request = request,context =context)
+            val request = GetCredentialRequest.Builder()
+                .addCredentialOption(
+                    GetGoogleIdOption.Builder().setFilterByAuthorizedAccounts(false)
+                        .setServerClientId(serverClientId).setAutoSelectEnabled(false).build()
+                )
+                .build()
+            return credentialManager.getCredential(request = request, context = context)
+        } catch (e: Exception) {
+            println(googleTag + " Error building or getting credential: ${e.message}")
+            throw e
+        }
     }
 
-    suspend fun signOut(){
-        credentialManager.clearCredentialState(
-            request = ClearCredentialStateRequest()
-        )
+    suspend fun signOut() {
+        try {
+            credentialManager.clearCredentialState(
+                request = ClearCredentialStateRequest()
+            )
+        } catch (e: Exception) {
+            println(googleTag + " Error clearing credential state: ${e.message}")
+        }
         auth.signOut()
     }
 

@@ -1,4 +1,4 @@
-package com.example.grocerly.model.uievents
+package com.example.grocerly.ui.uievents
 
 import org.json.JSONObject
 

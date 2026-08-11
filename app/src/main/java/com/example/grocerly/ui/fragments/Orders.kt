@@ -19,7 +19,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.grocerly.R
-import com.example.grocerly.activity.MainActivity
 import com.example.grocerly.adapters.OrderAdaptor
 import com.example.grocerly.databinding.FragmentOrdersBinding
 import com.example.grocerly.interfaces.OrderActionListener
@@ -50,7 +49,6 @@ class Orders : Fragment() {
     ): View {
         orders = FragmentOrdersBinding.inflate(inflater,container,false)
         loadingDialogue = LoadingDialogue(requireContext())
-        (requireActivity() as MainActivity).setTabLayoutVisibility(false)
         return binding.root
     }
 

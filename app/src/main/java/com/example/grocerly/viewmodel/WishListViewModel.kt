@@ -2,14 +2,13 @@ package com.example.grocerly.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import com.example.grocerly.Repository.remote.CartRepoImpl
 import com.example.grocerly.Repository.remote.WishListRepoImpl
 import com.example.grocerly.model.WishItem
-import com.example.grocerly.model.uievents.WishListUiEvents
-import com.example.grocerly.model.uievents.WishListUiEvents.*
-import com.example.grocerly.model.uistate.WishListUiState
+import com.example.grocerly.ui.uievents.WishListUiEvents
+import com.example.grocerly.ui.uievents.WishListUiEvents.*
+import com.example.grocerly.ui.uistate.WishListUiState
 import com.example.grocerly.utils.NetworkResult
 import com.example.grocerly.utils.NetworkUtils
 import dagger.hilt.android.lifecycle.HiltViewModel

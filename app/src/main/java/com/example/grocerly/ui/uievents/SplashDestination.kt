@@ -1,4 +1,4 @@
-package com.example.grocerly.model.uievents
+package com.example.grocerly.ui.uievents
 
 sealed class SplashDestination {
     object Home : SplashDestination()

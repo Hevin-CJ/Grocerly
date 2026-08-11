@@ -5,15 +5,13 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.grocerly.Repository.remote.CouponRepoImpl
-import com.example.grocerly.model.uievents.CouponUiEvent
-import com.example.grocerly.model.uistate.CouponUiState
+import com.example.grocerly.ui.uievents.CouponUiEvent
+import com.example.grocerly.ui.uistate.CouponUiState
 import com.example.grocerly.utils.NetworkResult
-import com.example.grocerly.utils.NetworkUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch

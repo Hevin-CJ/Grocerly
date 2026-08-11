@@ -10,7 +10,7 @@ import com.example.grocerly.databinding.MenuitemlayoutBinding
 import com.example.grocerly.model.CartProduct
 import com.example.grocerly.model.FavouriteItem
 import com.example.grocerly.model.Product
-import com.example.grocerly.model.uistate.MenuItemUiState
+import com.example.grocerly.ui.uistate.MenuItemUiState
 import com.example.grocerly.utils.MenuAction
 
 class MenuItemAdaptor(private val onMenuActionClicked:(MenuAction) -> Unit): RecyclerView.Adapter<RecyclerView.ViewHolder>() {

@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.grocerly.R
 import com.example.grocerly.adapters.CouponAdaptor
 import com.example.grocerly.databinding.FragmentCouponsBinding
-import com.example.grocerly.model.uievents.CouponUiEvent
+import com.example.grocerly.ui.uievents.CouponUiEvent
 import com.example.grocerly.utils.LoadingDialogue
 import com.example.grocerly.viewmodel.CouponViewModel
 import kotlinx.coroutines.launch

@@ -2,7 +2,6 @@ package com.example.grocerly.ui.screen
 
 import android.Manifest
 import android.os.Build
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,7 +15,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -31,6 +29,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
@@ -58,7 +58,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -68,6 +67,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -83,12 +83,12 @@ import com.example.grocerly.model.Order
 import com.example.grocerly.model.ParentCategoryItem
 import com.example.grocerly.model.Product
 import com.example.grocerly.model.WishItem
-import com.example.grocerly.model.uievents.HomeUiEvents
+import com.example.grocerly.ui.uievents.HomeUiEvents
 import com.example.grocerly.utils.ProductCategory
 import com.example.grocerly.utils.QuantityType
+import com.example.grocerly.utils.QuantityUtils.convertQuantityIntoString
 import com.example.grocerly.viewmodel.HomeViewModel
 import kotlinx.coroutines.delay
-import kotlin.collections.emptyList
 import kotlin.collections.isNotEmpty
 
 
@@ -147,6 +147,8 @@ fun HomeScreen(
         }
     }
 
+
+
     val initialFeedLoad = uiState.isLoading && uiState.products.isEmpty() && !uiState.isRefreshing
 
     Box(modifier = Modifier.fillMaxSize()){
@@ -156,20 +158,26 @@ fun HomeScreen(
             PullToRefreshBox(isRefreshing = uiState.isRefreshing, onRefresh = { homeViewModel.refreshHomeData() }, modifier = Modifier.fillMaxSize()){
                 HomeContent(
                     addressText = uiState.homeAddress,
-                    cartBadgeCount = uiState.cartItems.size,
+                    cartBadgeCount = uiState.cartProductIds.size,
                     localOffers = uiState.localOffers,
                     categories = uiState.categoryItems,
                     parentCategories = uiState.products,
                     onAddressClick = { showAddressSheet = true },
                     onCartClick = { onNavigateToCart() },
                     onSeeAllClick = {onNavigateToSeeAll(ProductCategory.selectcatgory) },
-                    onCategoryClick = { onNavigateToCategory(uiState.products[0])},
+                    onCategoryClick = {
+                      selectedCategory->onNavigateToSeeAll(selectedCategory)
+                    },
                     onAddOfferToCart = {productId,partnerId ->
                         homeViewModel.addOfferToCart(productId,partnerId)
                     },
                     onAddToCart = {homeViewModel.addProductToCart(it)},
                     onAddToFav = {homeViewModel.addProductToFavourites(it)},
-                    onAddToWishlist = { homeViewModel.addProductToWishlist(it) }
+                    onAddToWishlist = { homeViewModel.addProductToWishlist(it) },
+                    cartProductIds = uiState.cartProductIds,
+                    favouriteProductIds = uiState.favouriteProductIds,
+                    wishListProductIds = uiState.wishListProductIds,
+                    onParentCategoryClick = { parentCategory -> onNavigateToCategory(parentCategory) }
                 )
             }
         }
@@ -199,21 +207,25 @@ private fun HomeContent(
     parentCategories: List<ParentCategoryItem>,
     onAddressClick: () -> Unit,
     onCartClick: () -> Unit,
+    onParentCategoryClick: (ParentCategoryItem) -> Unit,
     onSeeAllClick: () -> Unit,
     onCategoryClick: (ProductCategory) -> Unit,
     onAddOfferToCart: (String, String) -> Unit,
     onAddToCart: (CartProduct) -> Unit,
     onAddToFav: (FavouriteItem) -> Unit,
-    onAddToWishlist: (WishItem) -> Unit
+    onAddToWishlist: (WishItem) -> Unit,
+    cartProductIds: Set<String>,
+    favouriteProductIds: Set<String>,
+    wishListProductIds: Set<String>
 ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(horizontal = 10.dp), // Mirrors guideline21 (10dp) and guideline22 (10dp)
+            .padding(horizontal = 10.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // --- 1. Address Toolbar (@id/addresstoolbar) ---
+
         item {
             AddressToolbar(
                 addressText = addressText,
@@ -223,7 +235,7 @@ private fun HomeContent(
             )
         }
 
-        // --- 2. Offers Banner (@id/rcpageoffers) ---
+
         if (localOffers.isNotEmpty()) {
             item {
                 OfferAutoScrollBanner(
@@ -233,7 +245,6 @@ private fun HomeContent(
             }
         }
 
-        // --- 3. Categories Header (@id/linearLayout2) & Categories (@id/rcviewCategory) ---
         if (categories.isNotEmpty()) {
             item {
                 Row(
@@ -253,14 +264,14 @@ private fun HomeContent(
                         text = "See all",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF2E7D32), // @color/green
+                        color = Color(0xFF2E7D32),
                         modifier = Modifier.clickable { onSeeAllClick() }
                     )
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Replaces @id/rcviewCategory (height = 100.dp)
+
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -269,23 +280,30 @@ private fun HomeContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     items(categories) { category ->
-                        CategoryItemCell(category)
+                        CategoryItemCell(category, onCategoryClick  = { onCategoryClick(category.category)})
                     }
                 }
 
                 HorizontalDivider(
                     modifier = Modifier.padding(top = 8.dp),
                     thickness = 1.dp,
-                    color = Color(0xFFE0E0E0) // @color/light_grey
+                    color = Color(0xFFE0E0E0)
                 )
             }
         }
 
 
         items(parentCategories) { parentCategory ->
+
             ParentCategorySection(
                 parentCategory = parentCategory,
-                onAddToCart = onAddToCart
+                onAddToCart = onAddToCart,
+                onAddToFav = onAddToFav,
+                onAddToWishlist = onAddToWishlist,
+                favouriteIds = favouriteProductIds,
+                wishListIds = wishListProductIds,
+                cartProductIds = cartProductIds,
+                onSeeAllClick = {onParentCategoryClick(parentCategory)},
             )
         }
     }
@@ -344,14 +362,24 @@ fun AddressToolbar(
 @Composable
 private fun ParentCategorySection(
     parentCategory: ParentCategoryItem,
-    onAddToCart: (CartProduct) -> Unit
+    onAddToCart: (CartProduct) -> Unit,
+    onAddToFav: (FavouriteItem) -> Unit,
+    onAddToWishlist: (WishItem) -> Unit,
+    onSeeAllClick: () -> Unit,
+    favouriteIds: Set<String>,
+    wishListIds:Set<String>,
+    cartProductIds: Set<String>
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        Row( modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp), horizontalArrangement = Arrangement.SpaceBetween , verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
                 text = parentCategory.categoryName,
                 fontSize = 16.sp,
@@ -365,6 +393,7 @@ private fun ParentCategorySection(
                 color = Color(0xFF2E7D32),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
+                modifier = Modifier.clickable{onSeeAllClick()}
             )
         }
 
@@ -372,13 +401,16 @@ private fun ParentCategorySection(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(items = parentCategory.childCategoryItems) { childProduct ->
+
+                val isCartAdded = cartProductIds.contains(childProduct.productId)
+                val isFavouriteAdded = favouriteIds.contains(childProduct.productId)
+                val isWishListAdded = wishListIds.contains(childProduct.productId)
+
                 Card(
                     modifier = Modifier
                         .width(150.dp)
                         .wrapContentHeight()
-                        .padding(vertical = 4.dp)
-
-                    ,
+                        .padding(vertical = 4.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, Color(0xFF4D4D4D))
@@ -387,16 +419,17 @@ private fun ParentCategorySection(
                         modifier = Modifier.fillMaxSize().padding(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                       Card( modifier = Modifier.width(110.dp).height(100.dp)
-                           , shape = RoundedCornerShape(8.dp)
-                       ) {
-                           AsyncImage(
-                               modifier = Modifier.fillMaxSize(),
-                               model = childProduct.image,
-                               contentDescription = childProduct.itemName,
-                               contentScale = ContentScale.Crop
-                           )
-                       }
+                        Card(
+                            modifier = Modifier.width(110.dp).height(100.dp),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            AsyncImage(
+                                modifier = Modifier.fillMaxSize(),
+                                model = childProduct.image,
+                                contentDescription = childProduct.itemName,
+                                contentScale = ContentScale.Crop
+                            )
+                        }
 
                         Spacer(modifier = Modifier.height(4.dp))
 
@@ -419,7 +452,7 @@ private fun ParentCategorySection(
                             Text(
                                 modifier = Modifier.padding(start = 4.dp, top = 2.dp),
                                 text = "${childProduct.itemRating.toString()} (${childProduct.totalRating.toString()})",
-                                fontSize = 14.sp,
+                                fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -432,13 +465,13 @@ private fun ParentCategorySection(
                         ) {
                             Text(
                                 text = "₹${childProduct.itemPrice ?: 0}",
-                                fontSize = 12.sp,
+                                fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold
                             )
 
                             Text(
                                 text = convertQuantityIntoString(childProduct.quantityType),
-                                fontSize = 9.sp,
+                                fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold
                             )
 
@@ -448,7 +481,7 @@ private fun ParentCategorySection(
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.Gray,
-                                maxLines = 1 ,
+                                maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 textDecoration = TextDecoration.LineThrough
                             )
@@ -469,15 +502,19 @@ private fun ParentCategorySection(
                                 ) {
                                     IconButton(
                                         onClick = {
-                                            onAddToCart(CartProduct(product = childProduct, quantity = 1))
+                                            onAddToFav(FavouriteItem("", childProduct))
                                         },
                                         modifier = Modifier.size(28.dp)
                                     ) {
                                         Icon(
-                                            painter = painterResource(id = R.drawable.favourites),
-                                            contentDescription = "Add to Cart",
+                                            painter = painterResource(
+                                                id = if (isFavouriteAdded) R.drawable.heartfavourite else R.drawable.favourites
+                                            ),
+                                            contentDescription = "Add to Favourites ",
                                             modifier = Modifier.size(18.dp),
-                                            tint  = if (childProduct.isFavourite) Color.Red else Color.Gray
+                                            tint = if (isFavouriteAdded) Color.Red else Color(
+                                                0xFF4D4D4D
+                                            )
                                         )
                                     }
 
@@ -485,12 +522,14 @@ private fun ParentCategorySection(
 
                                     IconButton(
                                         onClick = {
-                                            onAddToCart(CartProduct(product = childProduct, quantity = 1))
+                                            onAddToWishlist(WishItem(item = childProduct))
                                         },
                                         modifier = Modifier.size(28.dp)
                                     ) {
                                         Icon(
-                                            painter = if(childProduct.isFavourite) painterResource(id = R.drawable.wishlist) else painterResource(id = R.drawable.wishlist_done),
+                                            painter = if (isWishListAdded) painterResource(id = R.drawable.wishlist_done) else painterResource(
+                                                id = R.drawable.wishlist
+                                            ),
                                             contentDescription = "Add to Cart",
                                             modifier = Modifier.size(18.dp),
                                             tint = Color.Unspecified
@@ -507,7 +546,9 @@ private fun ParentCategorySection(
                                 modifier = Modifier.size(28.dp)
                             ) {
                                 Icon(
-                                    painter = if (childProduct.isInCart) painterResource(R.drawable.checkcircleadded) else painterResource(R.drawable.carthome) ,
+                                    painter = if (isCartAdded) painterResource(R.drawable.checkcircleadded) else painterResource(
+                                        R.drawable.carthome
+                                    ),
                                     contentDescription = "Add to Cart",
                                     modifier = Modifier.size(20.dp),
                                     tint = Color.Unspecified
@@ -522,120 +563,105 @@ private fun ParentCategorySection(
     }
 }
 
+
+
 @Composable
 fun OfferAutoScrollBanner(
     offers: List<OfferItem>,
     onAddOfferToCartClick: (String, String) -> Unit
 ) {
-    val listState = rememberLazyListState()
-    val activeIndex = remember { derivedStateOf { listState.firstVisibleItemIndex } }
+    if (offers.isEmpty()) return
 
-    LaunchedEffect(offers) {
+    val pagerState = rememberPagerState(pageCount = { offers.size })
+
+    LaunchedEffect(offers.size) {
         if (offers.size > 1) {
             while (true) {
                 delay(3000L)
-                if (!listState.isScrollInProgress) {
-                    val nextItem = (listState.firstVisibleItemIndex + 1) % offers.size
-                    listState.animateScrollToItem(nextItem)
+                if (!pagerState.isScrollInProgress) {
+                    val current = pagerState.currentPage
+                    val next = (current + 1) % offers.size
+                    pagerState.animateScrollToPage(next)
                 }
             }
         }
     }
 
     Column {
-        LazyRow(
-            state = listState,
+        HorizontalPager(
+            state = pagerState,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp)
                 .background(Color.White),
-            horizontalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            items(offers) { offer ->
-                val offerBgColor = remember(offer.offerBgColor) {
-                    try {
-                        Color(offer.offerBgColor.toColorInt())
-                    } catch (e: Exception) {
-                        Color.White
-                    }
-                }
-                val btnBgColor = remember(offer.buttonBgColor) {
-                    try {
-                        Color(offer.buttonBgColor.toColorInt())
-                    } catch (e: Exception) {
-                        Color(0xFF4CAF50)
-                    }
-                }
-                val btnTxtColor = remember(offer.buttonTxtColor) {
-                    try {
-                        Color(offer.buttonTxtColor.toColorInt())
-                    } catch (e: Exception) {
-                        Color.White
-                    }
-                }
-                val descTextColor = remember(offer.descriptionTextColor) {
-                    try {
-                        Color(offer.descriptionTextColor.toColorInt())
-                    } catch (e: Exception) {
-                        Color.Black
-                    }
-                }
+            pageSpacing = 16.dp
+        ) { page ->
+            val offer = offers[page]
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(350.dp)
-                        .clickable {
-                            val productId = offer.productId
-                            val partnerId = offer.partnerId
-                            onAddOfferToCartClick(productId, partnerId)
-                        },
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = offerBgColor)
-                ) {
-                    Row(modifier = Modifier.fillMaxSize()) {
-                        AsyncImage(
-                            modifier = Modifier
-                                .weight(1.1f)
-                                .fillMaxSize(),
-                            model = offer.offerImage,
-                            contentDescription = "Offer Banner",
-                            contentScale = ContentScale.FillBounds
+            val offerBgColor = remember(offer.offerBgColor) {
+                try { Color(offer.offerBgColor.toColorInt()) } catch (e: Exception) { Color.White }
+            }
+            val btnBgColor = remember(offer.buttonBgColor) {
+                try { Color(offer.buttonBgColor.toColorInt()) } catch (e: Exception) { Color(0xFF4CAF50) }
+            }
+            val btnTxtColor = remember(offer.buttonTxtColor) {
+                try { Color(offer.buttonTxtColor.toColorInt()) } catch (e: Exception) { Color.White }
+            }
+            val descTextColor = remember(offer.descriptionTextColor) {
+                try { Color(offer.descriptionTextColor.toColorInt()) } catch (e: Exception) { Color.Black }
+            }
+
+            Card(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 10.dp)
+                    .clickable {
+                        onAddOfferToCartClick(offer.productId, offer.partnerId)
+                    },
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = offerBgColor)
+            ) {
+                Row(modifier = Modifier.fillMaxSize()) {
+                    AsyncImage(
+                        modifier = Modifier
+                            .weight(1.1f)
+                            .fillMaxSize(),
+                        model = offer.offerImage,
+                        contentDescription = "Offer Banner",
+                        contentScale = ContentScale.FillBounds
+                    )
+                    Column(
+                        modifier = Modifier
+                            .weight(0.9f)
+                            .fillMaxHeight()
+                            .padding(12.dp),
+                        verticalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = offer.descriptionText,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = descTextColor,
+                            lineHeight = 1.5.em,
+                            modifier = Modifier.weight(1f)
                         )
-                        Column(
-                            modifier = Modifier
-                                .weight(.9f)
-                                .fillMaxHeight()
-                                .padding(12.dp),
-                            verticalArrangement = Arrangement.SpaceBetween
+
+                        Button(
+                            onClick = {
+                                onAddOfferToCartClick(offer.productId, offer.partnerId)
+                            },
+                            colors = buttonColors(
+                                containerColor = btnBgColor,
+                                contentColor = btnTxtColor
+                            ),
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = offer.descriptionText,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = descTextColor,
-                                maxLines = 3,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.weight(1f)
+                                text = offer.buttonText.ifEmpty { "Shop Now" },
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold
                             )
-
-                            Button(
-                                onClick = {
-                                    onAddOfferToCartClick(offer.productId, offer.partnerId)
-                                },
-                                colors = buttonColors(
-                                    containerColor = btnBgColor,
-                                    contentColor = btnTxtColor
-                                ),
-                                shape = RoundedCornerShape(8.dp),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = offer.buttonText.ifEmpty { "Shop Now" },
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
                         }
                     }
                 }
@@ -645,7 +671,7 @@ fun OfferAutoScrollBanner(
         if (offers.size > 1) {
             PageIndicator(
                 pageCount = offers.size,
-                currentPage = activeIndex.value,
+                currentPage = pagerState.currentPage,
                 modifier = Modifier
                     .padding(top = 8.dp)
                     .fillMaxWidth()
@@ -722,10 +748,11 @@ private fun HomeShimmerLoading() {
 }
 
 @Composable
-private fun CategoryItemCell(category: Category) {
+private fun CategoryItemCell(category: Category,onCategoryClick: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(horizontal = 4.dp)
+            .clickable { onCategoryClick() }
     ) {
         Card(  modifier = Modifier
             .size(60.dp)
@@ -748,16 +775,9 @@ private fun CategoryItemCell(category: Category) {
     }
 }
 
-fun convertQuantityIntoString(quantityType: QuantityType): String{
-   return when(quantityType){
-        QuantityType.selectQuantity -> "/ Quantity"
-        QuantityType.perKilogram -> "/ Kg"
-        QuantityType.perLiter -> "/ L"
-        QuantityType.perPiece -> "/ Piece"
-        QuantityType.perPacket -> "/ Packet"
-    }
 
-}
+
+
 
 
 @Preview(showBackground = true, name = "Home Screen - Content Loaded")
@@ -821,7 +841,12 @@ fun HomeScreenPreview() {
             onAddOfferToCart = { _, _ -> },
             onAddToCart = {},
             onAddToFav = {},
-            onAddToWishlist = {}
+            onAddToWishlist = {},
+            cartProductIds = emptySet(),
+            favouriteProductIds = emptySet(),
+            wishListProductIds = emptySet(),
+            onParentCategoryClick = {}
+
         )
     }
 }

@@ -13,7 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.grocerly.R
-import com.example.grocerly.activity.MainActivity
 import com.example.grocerly.adapters.ChatAdaptor
 import com.example.grocerly.databinding.FragmentHelpCenterBinding
 import com.example.grocerly.model.ChatMessageModel
@@ -39,7 +38,6 @@ class HelpCenter : Fragment() {
         savedInstanceState: Bundle?
     ): View {
        helpCenter = FragmentHelpCenterBinding.inflate(inflater,container,false)
-        (requireActivity() as MainActivity).setTabLayoutVisibility(false)
         return binding.root
     }
 

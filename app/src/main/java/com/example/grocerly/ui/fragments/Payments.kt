@@ -1,7 +1,6 @@
 package com.example.grocerly.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,7 @@ import com.example.grocerly.R
 import com.example.grocerly.adapters.PaymentAdaptor
 import com.example.grocerly.databinding.FragmentPaymentsBinding
 import com.example.grocerly.interfaces.PaymentListener
-import com.example.grocerly.model.uievents.PaymentUiEvent
+import com.example.grocerly.ui.uievents.PaymentUiEvent
 import com.example.grocerly.utils.LoadingDialogue
 import com.example.grocerly.utils.NetworkResult
 import com.example.grocerly.viewmodel.OrderSharedViewModel
@@ -98,7 +97,7 @@ class Payments : Fragment(), PaymentResultListener {
         viewLifecycleOwner.lifecycleScope.launch {
             paymentViewModel.confirmOrderState.collectLatest { state ->
                 when (state) {
-                    is NetworkResult.Loading -> {
+                    is NetworkResult.Loading<*> -> {
                         loadingDialogue.show()
                         loadingDialogue.setText("This may take a little longer, please wait...")
                     }

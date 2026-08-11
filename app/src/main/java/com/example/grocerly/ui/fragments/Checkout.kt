@@ -29,7 +29,7 @@ import com.example.grocerly.interfaces.AddressActionListener
 import com.example.grocerly.model.Address
 import com.example.grocerly.model.CartProduct
 import com.example.grocerly.model.Order
-import com.example.grocerly.model.uievents.CheckoutUiEvent
+import com.example.grocerly.ui.uievents.CheckoutUiEvent
 import com.example.grocerly.utils.LoadingDialogue
 import com.example.grocerly.viewmodel.CheckoutViewModel
 import com.example.grocerly.viewmodel.OrderSharedViewModel

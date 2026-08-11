@@ -17,8 +17,10 @@ enum class ProductCategory(val displayName:String) : Parcelable {
 
    companion object{
        fun fromString(name: String?): ProductCategory {
-           return entries.find { it.displayName == name }
-               ?: selectcatgory
+           return entries.find { 
+               it.name.equals(name, ignoreCase = true) || 
+               it.displayName.equals(name, ignoreCase = true) 
+           } ?: selectcatgory
        }
    }
 }

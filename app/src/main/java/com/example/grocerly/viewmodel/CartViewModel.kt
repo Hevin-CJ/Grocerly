@@ -11,8 +11,8 @@ import com.example.grocerly.cart.domain.usecase.FetchCartItemsUseCase
 import com.example.grocerly.cart.domain.usecase.FetchTotalCartAmountUseCase
 import com.example.grocerly.cart.domain.usecase.UpdateCartQuantityUseCase
 import com.example.grocerly.model.CartProduct
-import com.example.grocerly.model.uievents.CartUiEvents
-import com.example.grocerly.model.uistate.CartUiState
+import com.example.grocerly.ui.uievents.CartUiEvents
+import com.example.grocerly.ui.uistate.CartUiState
 import com.example.grocerly.utils.NetworkResult
 import com.example.grocerly.utils.NetworkUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,7 +37,7 @@ class CartViewModel @Inject constructor(
     private val updateCartQuantityUseCase: UpdateCartQuantityUseCase
 ) : AndroidViewModel(application) {
 
-    private val _cartUiState = MutableStateFlow<NetworkResult<CartUiState>>(NetworkResult.UnSpecified())
+    private val _cartUiState = MutableStateFlow<CartUiState>(CartUiState())
     val cartUiState get() = _cartUiState.asStateFlow()
 
     private val _cartUiEvents = Channel<CartUiEvents>()
@@ -45,28 +46,39 @@ class CartViewModel @Inject constructor(
     private val quantityUpdateJobs = mutableMapOf<String, Job>()
 
     init {
-        fetchCartData()
+        observeCartData()
     }
 
-    private fun fetchCartData() {
+    private fun observeCartData() {
         viewModelScope.launch {
             combine(
                 fetchCartItemsUseCase(),
                 fetchTotalCartAmountUseCase.fetchTotalAmount()
             ) { cartResult, totalResult ->
                 when {
-                    cartResult is NetworkResult.Error -> NetworkResult.Error(cartResult.message ?: "Failed to load cart")
-                    totalResult is NetworkResult.Error -> NetworkResult.Error(totalResult.message ?: "Failed to load total")
-                    cartResult is NetworkResult.Loading || totalResult is NetworkResult.Loading -> NetworkResult.Loading()
-                    cartResult is NetworkResult.Success && totalResult is NetworkResult.Success -> {
-                        val cartProducts = cartResult.data?.map { it.toDataModel() } ?: emptyList()
-                        NetworkResult.Success(CartUiState(cartProducts, totalResult.data))
+                    cartResult is NetworkResult.Error<*> -> {
+                        _cartUiEvents.send(CartUiEvents.ShowMessage(cartResult.message ?: "Failed to load cart"))
+                        _cartUiState.update {item-> item.copy(isLoading = false) }
                     }
-                    else -> NetworkResult.UnSpecified()
+                    totalResult is NetworkResult.Error<*> -> {
+                        _cartUiEvents.send(CartUiEvents.ShowMessage(totalResult.message ?: "Failed to load total"))
+                        _cartUiState.update { it.copy(isLoading = false) }
+                    }
+                    cartResult is NetworkResult.Loading<*> || totalResult is NetworkResult.Loading<*> -> {
+                        _cartUiState.update { it.copy(isLoading = true) }
+                    }
+                    cartResult is NetworkResult.Success<*> && totalResult is NetworkResult.Success<*> -> {
+                        val cartProducts = cartResult.data?.map { it.toDataModel() } ?: emptyList()
+                        _cartUiState.update {
+                            it.copy(
+                                isLoading = false,
+                                cartItems = cartProducts,
+                                totalAmount = totalResult.data ?: 0f
+                            )
+                        }
+                    }
                 }
-            }.collectLatest { combinedState ->
-                _cartUiState.value = combinedState
-            }
+            }.collectLatest {}
         }
     }
 

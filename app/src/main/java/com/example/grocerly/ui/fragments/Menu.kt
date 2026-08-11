@@ -167,21 +167,21 @@ class Menu : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
                 menuViewModel.logoutstate.collect{result->
                     when(result){
-                        is NetworkResult.Error -> {
+                        is NetworkResult.Error<*> -> {
                             loadingDialogue.dismiss()
                             Toast.makeText(requireContext(),result.message, Toast.LENGTH_SHORT).show()
                         }
-                        is NetworkResult.Loading -> {
+                        is NetworkResult.Loading<*> -> {
                             loadingDialogue.setText("Logging Out,Please wait....")
                            loadingDialogue.show()
                             Toast.makeText(requireContext(),"Loading.. Please wait",Toast.LENGTH_SHORT).show()
                         }
-                        is NetworkResult.Success -> {
+                        is NetworkResult.Success<*> -> {
                            loadingDialogue.dismiss()
-                            Toast.makeText(requireContext(),result.data,Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(),result.data.toString(),Toast.LENGTH_SHORT).show()
                             intentToMainActivity()
                         }
-                        is NetworkResult.UnSpecified -> {
+                        is NetworkResult.UnSpecified<*> -> {
                             loadingDialogue.dismiss()
                         }
                     }

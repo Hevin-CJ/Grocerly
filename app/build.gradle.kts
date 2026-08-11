@@ -31,7 +31,7 @@ android {
     defaultConfig {
         applicationId = "com.example.grocerly"
         minSdk = 29
-        targetSdk = 37
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -46,7 +46,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -80,8 +81,11 @@ android {
 dependencies {
 
 
+    implementation(libs.androidx.material.icons.extended)
+
     implementation(libs.androidx.foundation.layout)
     implementation(libs.material3)
+    implementation(libs.play.services.analytics.impl)
     //retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
@@ -103,7 +107,6 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.google.firebase.dynamic.links)
     implementation(libs.google.firebase.analytics)
-    implementation(libs.firebase.appcheck.playintegrity)
     implementation(libs.firebase.messaging)
 
     //livedata

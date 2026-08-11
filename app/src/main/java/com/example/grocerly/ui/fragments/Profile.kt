@@ -23,7 +23,6 @@ import com.example.grocerly.utils.LoadingDialogue
 import com.example.grocerly.utils.Mappers.toAccount
 import com.example.grocerly.utils.NetworkResult
 import com.example.grocerly.viewmodel.ProfileViewModel
-import com.google.android.play.integrity.internal.ac
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -161,21 +160,21 @@ class Profile : Fragment() {
            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
                profileViewModel.logoutState.collect{result->
                    when(result){
-                       is NetworkResult.Error -> {
+                       is NetworkResult.Error<*> -> {
                            loadingDialogue.dismiss()
                            binding.apply {
                                logoutbtn.visibility = View.VISIBLE
                            }
                            Toast.makeText(requireContext(),result.message, Toast.LENGTH_SHORT).show()
                        }
-                       is NetworkResult.Loading -> {
+                       is NetworkResult.Loading<*> -> {
                            binding.apply {
                                logoutbtn.visibility = View.VISIBLE
                            }
                            loadingDialogue.setText("Logging Out,Please wait....")
                            loadingDialogue.show()
                        }
-                       is NetworkResult.Success -> {
+                       is NetworkResult.Success<*> -> {
                            binding.apply {
                                logoutbtn.visibility = View.INVISIBLE
                            }

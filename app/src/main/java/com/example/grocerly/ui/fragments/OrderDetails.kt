@@ -23,7 +23,6 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.grocerly.R
-import com.example.grocerly.activity.MainActivity
 import com.example.grocerly.adapters.ChildCategoryAdaptor
 import com.example.grocerly.adapters.OtherOrderAdaptor
 import com.example.grocerly.databinding.FragmentOrderDetailsBinding
@@ -66,7 +65,6 @@ class OrderDetails : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         orderDetails = FragmentOrderDetailsBinding.inflate(inflater, container, false)
-        (requireActivity() as MainActivity).setTabLayoutVisibility(false)
         cartProduct = orderDetailsArgs.cartItem
         order = orderDetailsArgs.order
         return binding.root

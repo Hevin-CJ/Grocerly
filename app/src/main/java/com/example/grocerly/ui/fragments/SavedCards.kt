@@ -16,7 +16,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.grocerly.R
 import com.example.grocerly.SavedCardListener
-import com.example.grocerly.activity.MainActivity
 import com.example.grocerly.adapters.SavedCardAdaptor
 import com.example.grocerly.databinding.FragmentSavedCardsBinding
 import com.example.grocerly.model.Card
@@ -43,7 +42,6 @@ class SavedCards : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         savedCards = FragmentSavedCardsBinding.inflate(inflater,container,false)
-        (requireActivity() as MainActivity).setTabLayoutVisibility(false)
         loadingDialogue = LoadingDialogue(requireContext())
         return binding.root
     }

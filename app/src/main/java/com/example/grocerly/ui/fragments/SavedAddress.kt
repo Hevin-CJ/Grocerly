@@ -14,7 +14,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.grocerly.R
-import com.example.grocerly.activity.MainActivity
 import com.example.grocerly.adapters.AddressAdaptor
 import com.example.grocerly.databinding.FragmentSavedAddressBinding
 import com.example.grocerly.model.Address
@@ -41,7 +40,6 @@ class SavedAddress : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
        savedAddress = FragmentSavedAddressBinding.inflate(inflater,container,false)
-        (requireActivity() as MainActivity).setTabLayoutVisibility(false)
         loadingDialogue = LoadingDialogue(requireContext())
         return binding.root
     }

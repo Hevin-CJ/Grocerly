@@ -4,24 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     app:startDestination="@id/home">
 
-    <fragment
-        android:id="@+id/home"
-        android:name="com.example.grocerly.ui.fragments.Home"
-        android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_home_to_cart"
-            app:destination="@id/cart" />
-        <action
-            android:id="@+id/action_home_to_customSearchView"
-            app:destination="@id/customSearchView" />
-        <action
-            android:id="@+id/action_home_to_addAddress"
-            app:destination="@id/addAddress" />
-        <action
-            android:id="@+id/action_home_to_updateAddress"
-            app:destination="@id/updateAddress" />
-    </fragment>
+
     <fragment
         android:id="@+id/cart"
         android:name="com.example.grocerly.ui.fragments.Cart"
@@ -84,11 +67,7 @@
         android:name="com.example.grocerly.ui.fragments.Search"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" />
-    <fragment
-        android:id="@+id/favourites"
-        android:name="com.example.grocerly.ui.fragments.Favourites"
-        android:label="fragment_favourites"
-        tools:layout="@layout/fragment_favourites" />
+
     <fragment
         android:id="@+id/editProfile"
         android:name="com.example.grocerly.ui.fragments.EditProfile"

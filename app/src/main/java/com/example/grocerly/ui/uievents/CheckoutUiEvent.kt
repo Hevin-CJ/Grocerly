@@ -1,4 +1,4 @@
-package com.example.grocerly.model.uievents
+package com.example.grocerly.ui.uievents
 
 sealed interface CheckoutUiEvent {
     data class ShowMessage(val message: String) : CheckoutUiEvent

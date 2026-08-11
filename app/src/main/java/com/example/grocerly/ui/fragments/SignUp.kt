@@ -58,20 +58,20 @@ class SignUp : Fragment() {
        lifecycleScope.launch {
            signUpViewmodel.isSigned.collectLatest{result->
                when(result){
-                   is NetworkResult.Error -> {
+                   is NetworkResult.Error<*> -> {
                        Toast.makeText(requireContext(),result.message,Toast.LENGTH_SHORT).show()
                        binding.apply {
                            progressbarsignin.visibility = View.INVISIBLE
                            signupbtn.visibility = View.VISIBLE
                        }
                    }
-                   is NetworkResult.Loading -> {
+                   is NetworkResult.Loading<*> -> {
                        binding.apply {
                            progressbarsignin.visibility = View.VISIBLE
                            signupbtn.visibility = View.INVISIBLE
                        }
                    }
-                   is NetworkResult.Success -> {
+                   is NetworkResult.Success<*> -> {
                        Toast.makeText(requireContext(),"Signed In as ${result.data?.email}",Toast.LENGTH_SHORT).show()
                        findNavController().navigate(R.id.action_signUp_to_login)
                    }

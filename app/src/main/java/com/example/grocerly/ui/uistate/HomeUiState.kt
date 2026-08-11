@@ -1,4 +1,4 @@
-package com.example.grocerly.model.uistate
+package com.example.grocerly.ui.uistate
 
 import android.os.Bundle
 import com.example.grocerly.model.CartProduct
@@ -16,10 +16,10 @@ data class HomeUiState (
     val isRefreshing: Boolean = false,
     val products: List<ParentCategoryItem> = emptyList(),
     val categoryItems: List<Category> = emptyList(),
-    val cartItems: List<CartProduct> = emptyList(),
     val homeAddress: String = "",
     val localOffers: List<OfferItem> = emptyList(),
-    val favouriteItems: List<FavouriteItem> = emptyList(),
-    val wishListItems: List<WishItem> = emptyList(),
+    val cartProductIds: Set<String> = emptySet(),
+    val favouriteProductIds: Set<String> = emptySet(),
+    val wishListProductIds: Set<String> = emptySet()
 )
 

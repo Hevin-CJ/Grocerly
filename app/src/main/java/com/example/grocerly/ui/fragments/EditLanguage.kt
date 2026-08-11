@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.grocerly.R
-import com.example.grocerly.activity.MainActivity
 import com.example.grocerly.databinding.FragmentEditLanguageBinding
 import com.example.grocerly.preferences.GrocerlyDataStore
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,7 +32,6 @@ class EditLanguage : Fragment() {
     ): View? {
         editLanguage = FragmentEditLanguageBinding.inflate(inflater,container,false)
         grocerlyDataStore  = GrocerlyDataStore(requireContext())
-        (requireActivity() as MainActivity).setTabLayoutVisibility(false)
         return binding.root
     }
 

@@ -33,7 +33,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import androidx.core.graphics.drawable.toDrawable
-import com.example.grocerly.activity.MainActivity
 import com.example.grocerly.databinding.ChangeEmailLayoutBinding
 import com.example.grocerly.utils.Mappers.toAccount
 
@@ -65,7 +64,6 @@ class EditProfile : Fragment() {
         savedInstanceState: Bundle?
     ): View {
        editProfile = FragmentEditProfileBinding.inflate(inflater,container,false)
-        (requireActivity() as MainActivity).setTabLayoutVisibility(false)
         return binding.root
     }
 
@@ -106,19 +104,13 @@ class EditProfile : Fragment() {
 
                     }
                     is NetworkResult.Success<*> -> {
-                        actionToLogout()
+                        // Logout handled by ViewModel and observed by MainActivity
                     }
                     is NetworkResult.UnSpecified<*> -> {
 
                     }
                 }
             }
-        }
-    }
-
-    private fun actionToLogout() {
-        lifecycleScope.launch {
-            (requireActivity() as MainActivity).setNavigationGraph()
         }
     }
 

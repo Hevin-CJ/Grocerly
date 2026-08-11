@@ -1,4 +1,4 @@
-package com.example.grocerly.model.uistate
+package com.example.grocerly.ui.uistate
 
 import com.example.grocerly.model.EarnedCoupon
 

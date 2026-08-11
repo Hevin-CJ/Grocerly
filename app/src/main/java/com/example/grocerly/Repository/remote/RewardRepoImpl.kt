@@ -146,7 +146,7 @@ class RewardRepoImpl @Inject constructor(private val db: FirebaseFirestore,priva
             "deliveredDate" to deliveredDate,
             "orderStatus" to  orderStatus,
             "cancellationInfo" to cancellationInfo.toMap(),
-            "isRewardClaimed" to isRewardClaimed // Crucial step
+            "rewardClaimed" to isRewardClaimed // Crucial step
         )
     }
 

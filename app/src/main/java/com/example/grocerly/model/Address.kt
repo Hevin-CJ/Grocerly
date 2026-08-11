@@ -2,9 +2,11 @@ package com.example.grocerly.model
 
 import android.os.Parcelable
 import com.example.grocerly.utils.AddressType
+import com.google.firebase.firestore.IgnoreExtraProperties
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
+@IgnoreExtraProperties
 data class Address(
     var addressId: String = "",
     var firstName: String = "",

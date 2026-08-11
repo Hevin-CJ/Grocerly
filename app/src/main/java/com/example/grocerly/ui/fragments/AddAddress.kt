@@ -58,7 +58,7 @@ class AddAddress : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        saveAddressViewModel.getLocationDetails(requireContext())
+        saveAddressViewModel.getLocationDetails(requireContext().applicationContext)
     }
 
     private fun getCurrentLocationFromUseMyLocation() {
