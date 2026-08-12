@@ -2,7 +2,11 @@
 
 Grocerly is a native Android customer application for grocery shopping, featuring real-time product browsing, coupon redemption, secure payment processing, offline-tolerant order placement, and an AI-powered shopping assistant.
 
+> [!NOTE]
+> **Companion Application**: This is the customer-facing application. For the seller-facing management dashboard and catalog administrator, see the [Grocerly Partners (Seller App)](https://github.com/Hevin-CJ/Grocerly-Partner) repository.
+
 ---
+
 
 ## 🚀 Key Features
 
