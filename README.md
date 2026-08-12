@@ -22,7 +22,7 @@ Grocerly is a native Android customer application for grocery shopping, featurin
 * **Browsing & Search**: Search products across categories, toggle favorites, and maintain wishlists.
 * **Offline-Resilient Cart**: Interactive shopping cart powered by a local **Room Database** cache that automatically synchronizes with Cloud Firestore when online.
 * **Geolocated Deliveries**: Built-in address selection using **Google Maps SDK** and **Google Play Services Location APIs**.
-* **Offline-Tolerant Checkout**: Uses **WorkManager** (`PlaceOrderWorker`) to queue pending orders in a local Room database, ensuring 100% successful order routing to Firestore during network instability.
+* **Offline-Tolerant Checkout**: Uses **WorkManager** to queue pending orders in a local Room database, ensuring 100% successful order routing to Firestore during network instability.
 * **Integrated Payments**: Fully integrated **Razorpay SDK** checkout for secure payment processing.
 * **Real-time Order Tracking**: Track delivery milestones (`PENDING` ➔ `ACCEPTED` ➔ `READY` ➔ `SHIPPED` ➔ `DELIVERED`) with a visual step-progress indicator, driven by Firestore snapshot listeners.
 * **AI Support Agent**: Embedded chatbot assistant powered by **Gemini 2.5 Flash** (via **Firebase AI SDK**) that answers culinary questions, creates shopping lists, and provides step-by-step app navigation.
